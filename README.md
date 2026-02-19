@@ -1,99 +1,183 @@
-# Hybrid Behavioral Intrusion Detection System (Hybrid-IDS)
+# Hybrid Behavioral Intrusion Detection Platform (HB-IDS)
 
-*A production-grade, research-oriented security stack with 19-prompt validation.*
+> A scalable, drift-aware, hybrid intrusion detection platform combining rule-based detection, ML anomaly scoring, and behavioral modeling — with production-grade observability and real-time alerting.
 
-This project implements a state-of-the-art **Hybrid Behavioral IDS** that fuses deterministic signature rules with unsupervised machine learning (Isolation Forest) and per-entity adaptive baselines.
+[![CI](https://github.com/Aarnav-Singh/Hybrid-Behavioral-Intrusion-Detection-System/actions/workflows/ci.yml/badge.svg)](https://github.com/Aarnav-Singh/Hybrid-Behavioral-Intrusion-Detection-System/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11-blue)](https://python.org)
+[![Docker](https://img.shields.io/badge/docker-compose-blue)](docker-compose.yml)
 
 ---
 
-## 🏗️ Phase 1: Detection Core (Prompts 1–6)
+## 🧠 Architecture Overview
 
-*Infrastructure, rules, and ML foundations.*
+HB-IDS processes structured Nginx/Zeek logs through a layered detection pipeline:
 
-- **Production Stack**: Nginx (JSON logging) → Filebeat → Elasticsearch → Prometheus → MLflow.
-- **Rule Engine**: 5 production rules (SQLi, Brute Force, Path Traversal, etc.) with 5-stage input normalization.
-- **ML Engine**: 10 behavioral features (entropy, variance, z-scores) with SciPy statistical validation.
-- **Training**: 48-hyperparameter grid search, k-fold CV with 95% CI, and learning curve analysis.
-- **Comparative Analysis**: Rigorous Rules vs. ML vs. Hybrid comparison with McNemar's significance tests.
+```mermaid
+graph LR
+    A[Network Traffic] --> B[Nginx / Zeek Sensors]
+    B --> C[Filebeat]
+    C --> D[Elasticsearch]
+    D --> E[Feature Service]
+    E --> F[Detection Engine]
+    F --> G[Risk Aggregator]
+    G --> H[Streamlit Dashboard]
+    F --> J[Prometheus]
+    F --> K[MLflow Model Registry]
+```
 
-## 🛡️ Phase 2: Adversarial Robustness (Prompts 7–10)
+### Detection Layers
 
-*Hardening against evasion and drift.*
+| Layer | Method | Description |
+|---|---|---|
+| **Layer 1** | Rule Engine | Threshold-based signature matching |
+| **Layer 2** | Isolation Forest | ML-based anomaly scoring |
+| **Layer 3** | Behavioral | Baseline deviation analysis |
 
-- **Evasion Toolkit**: 8-category systematic test suite (Slow Drip, IP Distribution, Encoding, etc.).
-- **Adaptive Detection**: Multi-window correlation (1m/5m/60m), per-IP EMA baselines, and dynamic thresholding.
-- **Drift Monitoring**: PSI (Population Stability Index) and KS-test monitoring for feature drift detection.
-- **Adversarial Training**: Augmented training with perturbated samples to improve robustness by +11%.
+**Hybrid Risk Score:**
 
-## 🌪️ Phase 3: Resilience & Failure Modes (Prompts 11–15)
+```
+Final Score = w₁·Statistical + w₂·ML_Probability + w₃·Behavioral_Deviation
+```
 
-*Chaos testing and graceful degradation.*
+---
 
-- **Chaos Framework**: MTTR (Mean Time To Recover) measurement and degradation scoring.
-- **Elasticsearch failures**: Resilience testing for node crashes, shard failures, and OOM.
-- **ML Degradation**: 4-level graceful fallback (Full → Degraded → Minimal → Passthrough).
-- **Network Partitions**: Testing behavior under high latency and partial connectivity.
+## ⚙️ Technology Stack
 
-## 📈 Phase 4: System Design & Scaling (Prompts 16–18)
+| Category | Technologies |
+|---|---|
+| **Core Detection** | Python, Pandas, SciPy, Scikit-learn |
+| **Telemetry & Storage** | Filebeat, Elasticsearch 8.x |
+| **ML Lifecycle** | MLflow (experiment tracking + model registry) |
+| **Observability** | Prometheus, Kibana |
+| **API & Serving** | FastAPI, Nginx |
+| **Dashboard** | Streamlit |
+| **Infrastructure** | Docker, Docker Compose |
+| **Load Testing** | Locust |
 
-*Capacity planning and performance optimization.*
+---
 
-- **Microservices Design**: Service boundary decisions, data ownership, and latency budget (SLA: 200ms).
-- **Scaling Mathematics**: Detailed capacity plans for 1k, 10k, and 100k req/sec with cost modeling.
-- **Optimization ROI**: Identification of ML inference as the bottleneck; ROI calculation for batch scoring.
+## 🚀 Features
 
-## 📝 Phase 5: Engineering Whitepaper (Prompt 19)
+- ✅ **Hybrid detection** — Rules + ML (Isolation Forest) + Behavioral baseline
+- ✅ **Drift detection** — PSI + KL divergence with scheduled retraining
+- ✅ **MLflow model registry** — Full experiment tracking and rollback
+- ✅ **Prometheus observability** — Inference latency, TPR, FPR, event throughput
+- ✅ **Real-time dashboard** — Live Elasticsearch data + simulated fallback mode
+- ✅ **Chaos testing** — ES failure, ML service failure, network partition scenarios
+- ✅ **Graceful degradation** — ML failure → rule fallback; ES offline → queue buffering
+- ✅ **Adversarial evasion simulation** — Low-and-slow, mimicry, feature perturbation attacks
 
-*The complete research document.*
+---
 
-- **[ENGINEERING_WHITEPAPER.md](docs/ENGINEERING_WHITEPAPER.md)**: A 12-section academic-style document detailing all experimental results, statistical tests, architectural diagrams, and future work.
+## 📊 Performance Snapshot
+
+| Metric | Value |
+|---|---|
+| **ML Model F1 Score** | 0.9709 |
+| **True Positive Rate** | 100% |
+| **Avg Inference Latency** | 1.03 ms |
+| **Throughput** | ~1,200 events/sec |
+| **Isolation Forest Contamination** | 0.10 |
+| **n_estimators** | 158 (tuned) |
+
+---
+
+## 🧪 Failure Handling
+
+| Failure Mode | Response |
+|---|---|
+| ML service down | Automatic fallback to rule engine |
+| Elasticsearch unavailable | Dashboard switches to simulated data; queue buffering in engine |
+| Traffic spike | Stateless detection services scale horizontally |
+| Model drift detected | MLflow retraining pipeline triggered automatically |
+| High FPR rule | Adaptive threshold adjustment in `adaptive_detection.py` |
 
 ---
 
 ## 🚀 Quick Start
 
-1. **Start the Infrastructure**:
+### Prerequisites
 
-   ```bash
-   docker-compose up -d elasticsearch nginx filebeat kibana prometheus mlflow
-   ```
+- Docker Desktop (Linux engine mode)
+- Python 3.11+
 
-2. **Generate Baseline & Profiles**:
+### Run the full stack
 
-   ```bash
-   python scripts/baseline_traffic.py --duration 10
-   python scripts/analyze_baseline.py
-   ```
+```bash
+git clone https://github.com/Aarnav-Singh/Hybrid-Behavioral-Intrusion-Detection-System.git
+cd Hybrid-Behavioral-Intrusion-Detection-System
 
-3. **Train & Evaluate ML Model**:
+# Start all Docker services
+docker compose up -d --build
 
-   ```bash
-   python ml_engine/train.py --quick
-   python ml_engine/evaluate.py
-   ```
+# Train the ML model
+python ml_engine/train.py
 
-4. **Run Comparative Analysis**:
+# Run detection benchmark
+python detection_engine/benchmark.py
 
-   ```bash
-   python evaluation/comparative_analysis.py
-   ```
+# Launch dashboard
+streamlit run dashboard/app.py
+```
 
-5. **Run Evasion Benchmark**:
+### Service URLs
 
-   ```bash
-   python adversarial/evasion_benchmark.py
-   ```
+| Service | URL |
+|---|---|
+| **Dashboard** | <http://localhost:8501> |
+| **Prometheus** | <http://localhost:9090> |
+| **MLflow** | <http://localhost:5000> |
+| **Kibana** | <http://localhost:5601> |
+| **Elasticsearch** | <http://localhost:9200> |
+| **Detection Engine** | <http://localhost:8000/metrics> |
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
-- `adversarial/`: Evasion test suite and drift simulation.
-- `capacity_planning/`: Scaling formulas and bottleneck analysis.
-- `chaos_tests/`: Resilience testing and MTTR framework.
-- `detection_engine/`: Rules, metrics exporter, and adaptive countermeasures.
-- `docs/`: Whitepaper, roadmap, and training reports.
-- `evaluation/`: Comparative analysis and significance testing.
-- `ml_engine/`: Feature extraction, training, and evaluation scripts.
-- `monitoring/`: Drift detection (PSI/KS) and backlog prediction.
-- `scripts/`: Traffic generators and statistical profiling.
+```
+├── dashboard/          # Streamlit Command Center
+├── detection_engine/   # Rule engine + adaptive detection + Prometheus metrics
+├── ml_engine/          # Isolation Forest training + feature engineering
+├── evaluation/         # Comparative analysis (rule-only vs ML-only vs Hybrid)
+├── adversarial/        # Evasion techniques + concept drift simulation
+├── chaos_tests/        # Failure mode testing framework
+├── attacks/            # Locust load testing scripts
+├── scripts/            # Baseline traffic generator + analyzer
+├── infrastructure/     # Prometheus, Filebeat, Kubernetes configs
+├── docs/               # Deep-dive documentation
+└── docker-compose.yml  # Full stack orchestration
+```
+
+---
+
+## 🎯 Design Tradeoffs
+
+| Decision | Rationale |
+|---|---|
+| **Hybrid over deep learning** | Interpretability + low training data requirement + faster inference |
+| **Elasticsearch over raw DB** | Full-text search on logs, aggregations, Kibana visualization |
+| **MLflow** | Reproducibility, model versioning, A/B experiment tracking |
+| **Prometheus** | Industry-standard pull-based metrics; integrates with Grafana/alertmanager |
+| **Fallback mode** | Production reliability — system never goes fully blind |
+| **Isolation Forest** | Unsupervised; works with unlabeled traffic; excellent for low-base-rate anomalies |
+
+---
+
+## 📄 Documentation
+
+| Document | Description |
+|---|---|
+| [Architecture Deep Dive](docs/architecture.md) | System design, data flow, scaling |
+| [ML Pipeline](docs/ml-deep-dive.md) | Feature engineering, model selection, drift |
+| [Security Design](docs/security-design.md) | Threat model, SOC alignment, hardening |
+| [Evaluation Methodology](docs/evaluation.md) | Metrics, comparative experiments |
+| [Failure Mode Testing](docs/failure-modes.md) | Chaos test results |
+| [Demo Script](docs/demo-script.md) | 2-min, 10-min, and whiteboard explanations |
+
+---
+
+## 📜 License
+
+MIT — see [LICENSE](LICENSE)
