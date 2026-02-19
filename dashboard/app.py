@@ -265,10 +265,52 @@ with st.sidebar:
     sev_filter = st.multiselect("Severity", ["CRITICAL", "WARNING", "INFO"], default=["CRITICAL", "WARNING", "INFO"])
     type_filter = st.multiselect("Attack Type", ATTACK_TYPES, default=ATTACK_TYPES)
 
-    st.markdown('<div class="section-title" style="margin-top:1.5rem;">📚 Docs</div>', unsafe_allow_html=True)
-    st.markdown("[📋 User Guide](../docs/USER_GUIDE.md)")
-    st.markdown("[🏗️ Architecture](../docs/BACKEND_STRUCTURE.md)")
-    st.markdown("[📊 Tech Stack](../docs/TECH_STACK.md)")
+    # ── ML Operations ─────────────────────────────────────────────
+    st.markdown('<div class="section-title" style="margin-top:1.5rem;">🤖 ML Operations</div>', unsafe_allow_html=True)
+
+    import subprocess, sys, os as _os
+    _ROOT = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+
+    col_train, col_bench = st.columns(2)
+
+    with col_train:
+        train_btn = st.button("🧠 Train Model", use_container_width=True,
+                              help="Runs ml_engine/train.py — retrains the Isolation Forest model")
+    with col_bench:
+        bench_btn = st.button("📊 Benchmark", use_container_width=True,
+                              help="Runs detection_engine/benchmark.py — evaluates TPR/FPR/F1")
+
+    if train_btn:
+        with st.spinner("Training ML model…"):
+            result = subprocess.run(
+                [sys.executable, "ml_engine/train.py"],
+                capture_output=True, text=True, encoding="utf-8",
+                errors="replace", cwd=_ROOT,
+                env={**_os.environ, "PYTHONIOENCODING": "utf-8"}
+            )
+        if result.returncode == 0:
+            st.success("✅ Model trained successfully")
+        else:
+            st.error("❌ Training failed")
+        with st.expander("📋 Training Output", expanded=result.returncode != 0):
+            output = (result.stdout or "") + (result.stderr or "")
+            st.code(output[-3000:] if len(output) > 3000 else output, language="text")
+
+    if bench_btn:
+        with st.spinner("Running benchmark…"):
+            result = subprocess.run(
+                [sys.executable, "detection_engine/benchmark.py"],
+                capture_output=True, text=True, encoding="utf-8",
+                errors="replace", cwd=_ROOT,
+                env={**_os.environ, "PYTHONIOENCODING": "utf-8"}
+            )
+        if result.returncode == 0:
+            st.success("✅ Benchmark complete")
+        else:
+            st.error("❌ Benchmark failed")
+        with st.expander("📋 Benchmark Output", expanded=True):
+            output = (result.stdout or "") + (result.stderr or "")
+            st.code(output[-3000:] if len(output) > 3000 else output, language="text")
 
     # Injected below after es_live is known — placeholder
     es_badge_placeholder = st.empty()

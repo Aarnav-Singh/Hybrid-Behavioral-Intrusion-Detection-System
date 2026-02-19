@@ -34,6 +34,13 @@ import json
 import logging
 import random
 import sys
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass  # pre-3.7 python, unlikely here
+
 import time
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone

@@ -37,6 +37,11 @@ USAGE
 
 from __future__ import annotations
 
+import sys
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
+
 import argparse
 import json
 import os
@@ -372,9 +377,13 @@ def train_final_model(X: np.ndarray, best_params: dict) -> IsolationForest:
         mlflow.log_metric("model_size_mb", round(model_size_mb, 3))
         mlflow.log_metric("n_features",  X.shape[1])
         mlflow.log_metric("n_samples",   X.shape[0])
-        mlflow.sklearn.log_model(model, artifact_path="final_model")
-        mlflow.set_tag("best_model", "true")
-        mlflow.log_artifact(model_path)
+        try:
+            mlflow.sklearn.log_model(model, artifact_path="final_model")
+            mlflow.set_tag("best_model", "true")
+            mlflow.log_artifact(model_path)
+        except Exception as e:
+            print(f"\n  [WARN] MLflow artifact logging failed: {e}")
+            print("  Continuing with local model file only (training successful).")
 
         run_id = run.info.run_id
 

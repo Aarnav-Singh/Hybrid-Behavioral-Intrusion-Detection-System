@@ -107,7 +107,7 @@ def test_inference_latency_sla(n_samples: int = 1000, sla_ms: float = 5.0):
     else:
         model = joblib.load(MODEL_PATH)
         rng   = np.random.default_rng(42)
-        X     = rng.standard_normal((n_samples, 9))  # 9 features
+        X     = rng.standard_normal((n_samples, 10))  # 10 features (f1–f10)
 
         latencies = []
         for i in range(n_samples):
