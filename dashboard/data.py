@@ -142,6 +142,11 @@ def _es_get_trend() -> list[int]:
                 "date_histogram": {
                     "field": "@timestamp",
                     "fixed_interval": "1m",
+                    "min_doc_count": 0,
+                    "extended_bounds": {
+                        "min": "now-1h",
+                        "max": "now"
+                    }
                 }
             }
         },
