@@ -64,7 +64,7 @@ st.markdown("""
     /* Hide Streamlit default chrome */
     #MainMenu { visibility: hidden; }
     footer { visibility: hidden; }
-    header { visibility: hidden; }
+    /* header { visibility: hidden; } */
 
     /* Sidebar */
     section[data-testid="stSidebar"] {
