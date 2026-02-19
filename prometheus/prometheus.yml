@@ -1,0 +1,114 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Prometheus Configuration - Hybrid IDS Metrics
+#
+# WHY PROMETHEUS (vs just using Elasticsearch):
+#   Elasticsearch is optimized for log search & text analysis.
+#   Prometheus is optimized for TIME-SERIES numeric metrics:
+#     - Sub-second scrape resolution (vs ES's 1-day index granularity)
+#     - Built-in alerting via Alertmanager
+#     - PromQL - purpose-built query language for rate/range/increase functions
+#     - Low-cardinality counters/gauges/histograms (detection engine outputs)
+#
+# HOW PROMETHEUS TRACKS DETECTION METRICS:
+#   1. Detection service exposes /metrics endpoint (prometheus-client library)
+#   2. Prometheus scrapes every 15s (configurable)
+#   3. Metrics stored in local TSDB for 15 days (default)
+#   4. Alerting rules trigger when thresholds are crossed
+#   5. Grafana (optional) visualizes the time series
+#
+# DETECTION METRICS EXPOSED BY OUR SERVICE (ids_* prefix):
+#   ids_alerts_total{attack_type}  - Counter: number of alerts fired
+#   ids_requests_analyzed_total    - Counter: total logs processed
+#   ids_model_inference_seconds    - Histogram: ML inference latency
+#   ids_active_threats_gauge       - Gauge: currently active threats
+#   ids_false_positive_rate        - Gauge: rolling FP rate (15-min window)
+#   ids_anomaly_score{ip}          - Gauge: per-IP anomaly score
+# ─────────────────────────────────────────────────────────────────────────────
+
+global:
+  # How often to scrape each target's /metrics endpoint
+  scrape_interval: 15s
+
+  # How often to evaluate alerting/recording rules
+  evaluation_interval: 15s
+
+  # Labels added to all time series from this Prometheus instance
+  external_labels:
+    environment: "production"
+    system: "hybrid-ids"
+    cluster: "local"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Alerting rules file references
+# ─────────────────────────────────────────────────────────────────────────────
+rule_files:
+  - "rules/ids_alerts.yml"
+  - "rules/es_alerts.yml"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Scrape configurations
+# ─────────────────────────────────────────────────────────────────────────────
+scrape_configs:
+  # ── Prometheus self-monitoring ──────────────────────────────────────────
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+    metrics_path: /metrics
+
+  # ── Detection Service (our IDS) ─────────────────────────────────────────
+  # This is the primary source of detection metrics.
+  # The Python detection_engine exposes these via prometheus-client.
+  - job_name: "detection_service"
+    scrape_interval: 10s # Faster scrape for real-time detection alerting
+    scrape_timeout: 8s
+    static_configs:
+      - targets: ["detection:8000"]
+        labels:
+          service: "ids-detection"
+          component: "ml-engine"
+    metrics_path: "/metrics"
+
+  # ── Elasticsearch ───────────────────────────────────────────────────────
+  # Monitor ES cluster health and indexing throughput.
+  # Useful for detecting pipeline delays (log ingest lag).
+  - job_name: "elasticsearch"
+    scrape_interval: 30s
+    static_configs:
+      - targets: ["elasticsearch:9200"]
+        labels:
+          service: "elasticsearch"
+          component: "log-storage"
+    metrics_path: "/_prometheus/metrics"
+    # Note: requires elasticsearch-exporter for proper metrics.
+    # Alternatively use the Elasticsearch exporter sidecar.
+
+  # ── Nginx ───────────────────────────────────────────────────────────────
+  # Nginx stub_status metrics (active connections, request rate).
+  # Used to correlate Prometheus metrics with log-based detection.
+  - job_name: "nginx"
+    scrape_interval: 15s
+    static_configs:
+      - targets: ["nginx:80"]
+        labels:
+          service: "nginx"
+          component: "web-server"
+    metrics_path: "/nginx-status"
+
+  # ── MLflow Server ───────────────────────────────────────────────────────
+  # Monitor MLflow for model registration events.
+  - job_name: "mlflow"
+    scrape_interval: 60s
+    static_configs:
+      - targets: ["mlflow:5000"]
+        labels:
+          service: "mlflow"
+          component: "experiment-tracking"
+# ─────────────────────────────────────────────────────────────────────────────
+# Remote write (optional - for long-term storage or Grafana Cloud)
+# Uncomment if you want to ship metrics to an external system.
+# ─────────────────────────────────────────────────────────────────────────────
+# remote_write:
+#   - url: "https://prometheus-prod.example.grafana.net/api/prom/push"
+#     basic_auth:
+#       username: "<grafana_cloud_user>"
+#       password: "<grafana_cloud_api_key>"

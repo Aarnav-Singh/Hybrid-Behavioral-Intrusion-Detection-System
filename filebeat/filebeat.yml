@@ -1,0 +1,164 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Filebeat Configuration - Hybrid IDS Log Pipeline
+#
+# WHY FILEBEAT: Enterprise-grade log shipper with:
+#   - At-least-once delivery guarantees (registry tracks file offsets)
+#   - Handles log rotation without losing events
+#   - Backpressure handling (queues events if ES is slow)
+#   - Native JSON parsing (our nginx logs are already JSON)
+#   - Zero data duplication on restart
+#
+# DATA FLOW: Nginx writes JSON → Filebeat tails file → Elasticsearch index
+# ─────────────────────────────────────────────────────────────────────────────
+
+filebeat.inputs:
+  # ── Nginx Access Logs ────────────────────────────────────────────────────
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/nginx/access.log
+
+    # Parse the JSON log format we configured in nginx.conf
+    # Keys appear at the root level of the ES document (not nested)
+    json.keys_under_root: true
+    json.add_error_key: true
+    json.message_key: "request_uri"
+
+    # Tag each event for filtering in detection rules
+    tags: ["nginx", "access", "ids-source"]
+
+    # Add metadata fields for source identification
+    fields:
+      log_type: nginx_access
+      environment: production
+      monitored_service: nginx
+    fields_under_root: false
+
+    # Multiline handling: nginx JSON should be single-line, but be safe
+    multiline.type: pattern
+    multiline.pattern: '^\{'
+    multiline.negate: true
+    multiline.match: after
+
+    # Scan frequency for new log lines
+    scan_frequency: 1s
+
+    # Ignore older logs during startup (only ship new events)
+    ignore_older: 24h
+
+    # Close inactive file handles to reduce system load
+    close_inactive: 5m
+
+  # ── Nginx Error Logs ─────────────────────────────────────────────────────
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/nginx/error.log
+    tags: ["nginx", "error", "ids-source"]
+    fields:
+      log_type: nginx_error
+      environment: production
+    fields_under_root: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Internal queue configuration
+# ─────────────────────────────────────────────────────────────────────────────
+queue.mem:
+  events: 4096
+  flush.min_events: 512
+  flush.timeout: 5s
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Processors - Transform events before shipping
+# Applied in order; these enrich events for detection analysis
+# ─────────────────────────────────────────────────────────────────────────────
+processors:
+  # Add host information for multi-host deployments
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+
+  # Drop health check requests to reduce noise in detection
+  - drop_event:
+      when:
+        equals:
+          request_uri: "/health"
+
+  # Drop nginx-status internal requests
+  - drop_event:
+      when:
+        equals:
+          request_uri: "/nginx-status"
+
+  # Convert status field to integer for range queries in ES
+  - convert:
+      fields:
+        - { from: "status", type: integer }
+        - { from: "body_bytes_sent", type: integer }
+        - { from: "request_length", type: integer }
+      ignore_missing: true
+      fail_on_error: false
+
+  # Categorize HTTP status codes for easier aggregation
+  - script:
+      lang: javascript
+      id: classify_status
+      source: >
+        function process(event) {
+          var status = event.Get("status");
+          if (status >= 500) {
+            event.Put("status_class", "5xx");
+          } else if (status >= 400) {
+            event.Put("status_class", "4xx");
+          } else if (status >= 300) {
+            event.Put("status_class", "3xx");
+          } else if (status >= 200) {
+            event.Put("status_class", "2xx");
+          }
+        }
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Output - Elasticsearch
+# ─────────────────────────────────────────────────────────────────────────────
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+
+  # Daily rolling index: nginx-logs-2024.01.15
+  # Enables time-based queries and ILM policies
+  index: "nginx-logs-%{+yyyy.MM.dd}"
+
+  # Bulk insert for efficiency (batch 256 events or wait 5s)
+  bulk_max_size: 256
+  flush_interval: 5s
+
+  # Retry on temporary ES failures
+  max_retries: 3
+  backoff.init: 1s
+  backoff.max: 60s
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Index Template Setup
+# ─────────────────────────────────────────────────────────────────────────────
+setup.template.name: "nginx-logs"
+setup.template.pattern: "nginx-logs-*"
+setup.template.enabled: true
+setup.template.overwrite: false
+setup.template.settings:
+  index.number_of_shards: 1
+  index.number_of_replicas: 0
+  index.refresh_interval: "5s"
+
+# Disable ILM - we manage lifecycle manually
+setup.ilm.enabled: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Logging - Filebeat's own logs
+# ─────────────────────────────────────────────────────────────────────────────
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
+logging.metrics.enabled: true
+logging.metrics.period: 30s

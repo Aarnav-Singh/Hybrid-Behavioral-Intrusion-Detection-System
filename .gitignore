@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.env
+.venv/
+ENV/
+
+# ML artifacts & data (large files)
+mlruns/
+models/*.pkl
+models/*.joblib
+data/*.csv
+data/*.parquet
+data/*.json
+!data/.gitkeep
+
+# Elasticsearch data (Docker volume — not source code)
+es-data/
+
+# Logs
+logs/
+*.log
+nginx/logs/*.log
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker build cache
+.dockerignore
+
+# Test output
+htmlcov/
+.coverage
+.pytest_cache/
+reports/
+
+# Secrets / credentials
+.env.local
+secrets.yaml
+*.pem
+*.key
+
+# Streamlit cache
+.streamlit/cache/
+
+# Temp
+tmp/
+temp/
