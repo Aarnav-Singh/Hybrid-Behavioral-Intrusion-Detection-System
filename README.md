@@ -175,6 +175,7 @@ streamlit run dashboard/app.py
 | [Evaluation Methodology](docs/evaluation.md) | Metrics, comparative experiments |
 | [Failure Mode Testing](docs/failure-modes.md) | Chaos test results |
 | [Demo Script](docs/demo-script.md) | 2-min, 10-min, and whiteboard explanations |
+| [Mathematical Models](docs/MATHEMATICAL_MODEL.md) | Formulas for Scaling, ML Metrics, Isolation Forest |
 
 ---
 
