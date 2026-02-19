@@ -186,7 +186,10 @@ def hyperparameter_search(
             mlflow.set_tag("phase", "hyperparameter_search")
 
             # ── Log model ────────────────────────────────────────────────────
-            mlflow.sklearn.log_model(model, artifact_path="model")
+            try:
+                mlflow.sklearn.log_model(model, name="model")
+            except Exception:
+                pass  # Ignore artifact upload failures during search
 
             print(f"  {run_name}: F1={m['f1']:.4f}  TPR={m['tpr']:.2%}  "
                   f"FPR={m['fpr']:.2%}  infer={infer_time:.2f}ms")
@@ -340,7 +343,10 @@ def learning_curve_analysis(
         ax.grid(alpha=0.3)
         out = str(REPORTS_DIR / "learning_curve.png")
         plt.tight_layout(); plt.savefig(out, dpi=140); plt.close()
-        mlflow.log_artifact(out)
+        try:
+            mlflow.log_artifact(out)
+        except Exception:
+            pass  # Ignore artifact upload failures
 
     return df
 
@@ -378,7 +384,7 @@ def train_final_model(X: np.ndarray, best_params: dict) -> IsolationForest:
         mlflow.log_metric("n_features",  X.shape[1])
         mlflow.log_metric("n_samples",   X.shape[0])
         try:
-            mlflow.sklearn.log_model(model, artifact_path="final_model")
+            mlflow.sklearn.log_model(model, name="final_model")
             mlflow.set_tag("best_model", "true")
             mlflow.log_artifact(model_path)
         except Exception as e:
