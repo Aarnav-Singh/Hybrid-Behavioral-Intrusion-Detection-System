@@ -89,7 +89,3 @@ Draw left to right:
 | Why not signature-only? | Signatures miss zero-day and slow-and-low; hybrid catches what rules miss |
 
 ---
-
-## Resume Bullet
-
-> Built a production-grade hybrid behavioral intrusion detection platform using Python, Elasticsearch, MLflow, and Prometheus. Implemented a three-layer detection pipeline (rule engine + Isolation Forest + behavioral baseline) achieving F1=0.97 with 1ms inference latency. Designed graceful degradation, chaos-tested failure modes, and adversarial evasion scenarios.
