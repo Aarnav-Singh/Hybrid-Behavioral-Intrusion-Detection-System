@@ -1,0 +1,73 @@
+groups:
+  - name: hbids_detection_alerts
+    interval: 30s
+    rules:
+      # ── High False Positive Rate ────────────────────────────────────
+      - alert: HighFalsePositiveRate
+        expr: rate(hbids_false_positives_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High FPR on detection engine"
+          description: "FPR exceeded 10% for 2 minutes. Rule tuning may be needed."
+
+      # ── Inference Latency SLA Breach ────────────────────────────────
+      - alert: InferenceLatencyHigh
+        expr: hbids_inference_latency_seconds > 0.005
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Inference latency exceeds 5ms SLA"
+          description: "Detection engine P99 latency: {{ $value }}s"
+
+      # ── Detection Engine Down ───────────────────────────────────────
+      - alert: DetectionEngineDown
+        expr: up{job="hbids-detection-engine"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Detection engine is down"
+          description: "No scrape from detection engine for 1+ minute."
+
+      # ── Elasticsearch Cluster Red ────────────────────────────────────
+      - alert: ElasticsearchClusterRed
+        expr: elasticsearch_cluster_health_status{color="red"} == 1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Elasticsearch cluster is RED"
+          description: "ES cluster health is red — data loss risk."
+
+      # ── Zero Alerts in 1 Hour ───────────────────────────────────────
+      - alert: NoAlertsGenerated
+        expr: increase(hbids_alerts_total[1h]) == 0
+        for: 60m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No detection alerts generated in 1 hour"
+          description: "Possible detection pipeline stall or no traffic."
+
+      # ── Model Drift Detected ─────────────────────────────────────────
+      - alert: ConceptDriftDetected
+        expr: hbids_drift_psi_score > 0.2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Concept drift detected (PSI > 0.2)"
+          description: "PSI score: {{ $value }}. Retraining may be required."
+
+      # ── Nginx High Error Rate ────────────────────────────────────────
+      - alert: NginxHighErrorRate
+        expr: rate(nginx_http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Nginx 5xx error rate > 5%"
+          description: "5xx rate: {{ $value }} req/s over last 5 minutes."

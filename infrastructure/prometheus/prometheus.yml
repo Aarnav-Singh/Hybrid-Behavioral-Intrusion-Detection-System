@@ -1,0 +1,47 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: "hbids-monitor"
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+          # - alertmanager:9093
+
+# Load alert rules
+rule_files:
+  - "rules/alerts.yml"
+
+scrape_configs:
+  # ── Detection Engine ────────────────────────────────────────────
+  - job_name: "hbids-detection-engine"
+    static_configs:
+      - targets: ["detection:8000"]
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  # ── Elasticsearch ───────────────────────────────────────────────
+  - job_name: "elasticsearch"
+    static_configs:
+      - targets: ["elasticsearch:9200"]
+    metrics_path: /_prometheus/metrics
+    scrape_interval: 30s
+
+  # ── Nginx (via nginx-prometheus-exporter) ───────────────────────
+  - job_name: "nginx"
+    static_configs:
+      - targets: ["nginx:9113"]
+    scrape_interval: 15s
+
+  # ── Prometheus self-monitoring ──────────────────────────────────
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # ── Host node (optional — requires node_exporter) ───────────────
+  # - job_name: 'node'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']

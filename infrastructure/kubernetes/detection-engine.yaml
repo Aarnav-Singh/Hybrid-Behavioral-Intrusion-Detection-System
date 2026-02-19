@@ -1,0 +1,110 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hbids-detection
+  namespace: hbids
+  labels:
+    app: hbids
+    component: detection-engine
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hbids
+      component: detection-engine
+  template:
+    metadata:
+      labels:
+        app: hbids
+        component: detection-engine
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: detection-engine
+          image: hbids-detection:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: ES_HOST
+              value: "http://elasticsearch:9200"
+            - name: MLFLOW_TRACKING_URI
+              value: "http://mlflow:5000"
+            - name: PYTHONIOENCODING
+              value: "utf-8"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          volumeMounts:
+            - name: models-volume
+              mountPath: /app/models
+      volumes:
+        - name: models-volume
+          persistentVolumeClaim:
+            claimName: hbids-models-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hbids-detection-svc
+  namespace: hbids
+  labels:
+    app: hbids
+    component: detection-engine
+spec:
+  selector:
+    app: hbids
+    component: detection-engine
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hbids-detection-hpa
+  namespace: hbids
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hbids-detection
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
