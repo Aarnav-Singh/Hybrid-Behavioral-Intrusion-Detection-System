@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --scan-color: rgba(0, 255, 65, 0.05);
+  }
+
+  body {
+    @apply bg-bg-dark text-gray-300 font-sans overflow-x-hidden;
+    background-image: 
+      linear-gradient(rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.95)),
+      url('https://images.unsplash.com/photo-1768330187168-8acee7753983?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHw0fHxhYnN0cmFjdCUyMGRpZ2l0YWwlMjBuZW9uJTIwZ3JpZHxlbnwwfHx8fDE3NzE1MjgxNDF8MA&ixlib=rb-4.1.0&q=85');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-bg-dark;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neon-green/20 hover:bg-neon-green/50 transition-colors;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 255, 65, 0.3);
+  }
+  
+  .text-glow-cyan {
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
+  }
+
+  .text-glow-red {
+    text-shadow: 0 0 10px rgba(255, 0, 60, 0.5), 0 0 20px rgba(255, 0, 60, 0.3);
+  }
+
+  .border-glow {
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+  }
+
+  .scanline-overlay {
+    @apply fixed inset-0 pointer-events-none z-50;
+    background: linear-gradient(
+      rgba(18, 16, 20, 0) 50%,
+      rgba(0, 0, 0, 0.25) 50%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.06),
+      rgba(0, 255, 0, 0.02),
+      rgba(0, 0, 255, 0.06)
+    );
+    background-size: 100% 4px, 3px 100%;
+  }
+  
+  .clip-corner {
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% calc(100% - 12px),
+      calc(100% - 12px) 100%,
+      0 100%
+    );
+  }
+
+  .clip-corner-tr {
+      clip-path: polygon(
+      0 0,
+      calc(100% - 12px) 0,
+      100% 12px,
+      100% 100%,
+      0 100%
+    );
+  }
+}
+
+/* Glitch Animation Keyframes */
+@keyframes glitch-anim-1 {
+  0% { clip: rect(20px, 9999px, 10px, 0); }
+  20% { clip: rect(60px, 9999px, 80px, 0); }
+  40% { clip: rect(35px, 9999px, 5px, 0); }
+  60% { clip: rect(75px, 9999px, 45px, 0); }
+  80% { clip: rect(15px, 9999px, 55px, 0); }
+  100% { clip: rect(50px, 9999px, 20px, 0); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip: rect(10px, 9999px, 60px, 0); }
+  20% { clip: rect(50px, 9999px, 20px, 0); }
+  40% { clip: rect(25px, 9999px, 90px, 0); }
+  60% { clip: rect(70px, 9999px, 30px, 0); }
+  80% { clip: rect(10px, 9999px, 60px, 0); }
+  100% { clip: rect(40px, 9999px, 15px, 0); }
+}

@@ -37,7 +37,7 @@ The Dashboard for the HB-IDS is envisioned as a **premium, high-performance comm
 ### Framework
 
 - **Next.js (React):** For a production-grade, server-rendered dashboard.
-- **Streamlit:** For rapid prototyping of ML insights and data exploration (Python-native).
+- **React (Vite):** A high-performance SPA connected to FastAPI WebSockets for real-time telemetry.
 
 ### Styling
 

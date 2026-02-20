@@ -21,7 +21,8 @@ graph LR
     D --> E[Feature Service]
     E --> F[Detection Engine]
     F --> G[Risk Aggregator]
-    G --> H[Streamlit Dashboard]
+    G --> H[FastAPI Backend]
+    H --> I[React Web Dashboard]
     F --> J[Prometheus]
     F --> K[MLflow Model Registry]
 ```
@@ -50,8 +51,8 @@ Final Score = w₁·Statistical + w₂·ML_Probability + w₃·Behavioral_Deviat
 | **Telemetry & Storage** | Filebeat, Elasticsearch 8.x |
 | **ML Lifecycle** | MLflow (experiment tracking + model registry) |
 | **Observability** | Prometheus, Kibana |
-| **API & Serving** | FastAPI, Nginx |
-| **Dashboard** | Streamlit |
+| **Backend API** | FastAPI, Uvicorn (WebSockets) |
+| **Frontend UI** | React, Vite, Tailwind CSS, Recharts |
 | **Infrastructure** | Docker, Docker Compose |
 | **Load Testing** | Locust |
 
@@ -63,7 +64,7 @@ Final Score = w₁·Statistical + w₂·ML_Probability + w₃·Behavioral_Deviat
 - ✅ **Drift detection** — PSI + KL divergence with scheduled retraining
 - ✅ **MLflow model registry** — Full experiment tracking and rollback
 - ✅ **Prometheus observability** — Inference latency, TPR, FPR, event throughput
-- ✅ **Real-time dashboard** — Live Elasticsearch data + simulated fallback mode
+- ✅ **Real-time React dashboard** — High-performance SPA with live FastAPI WebSocket feeds
 - ✅ **Chaos testing** — ES failure, ML service failure, network partition scenarios
 - ✅ **Graceful degradation** — ML failure → rule fallback; ES offline → queue buffering
 - ✅ **Adversarial evasion simulation** — Low-and-slow, mimicry, feature perturbation attacks
@@ -111,21 +112,16 @@ cd Hybrid-Behavioral-Intrusion-Detection-System
 # Start all Docker services
 docker compose up -d --build
 
-# Train the ML model
-python ml_engine/train.py
-
-# Run detection benchmark
-python detection_engine/benchmark.py
-
-# Launch dashboard
-streamlit run dashboard/app.py
+# Run the complete pipeline (auto-generates data, trains model, starts API + React UI)
+python run_project.py
 ```
 
 ### Service URLs
 
 | Service | URL |
 |---|---|
-| **Dashboard** | <http://localhost:8501> |
+| **React Dashboard** | <http://localhost:5173> |
+| **FastAPI Backend** | <http://localhost:8888/docs> |
 | **Prometheus** | <http://localhost:9090> |
 | **MLflow** | <http://localhost:5000> |
 | **Kibana** | <http://localhost:5601> |
@@ -137,7 +133,8 @@ streamlit run dashboard/app.py
 ## 📁 Project Structure
 
 ```
-├── dashboard/          # Streamlit Command Center
+├── frontend/           # React + Vite Command Center SPA
+├── backend/            # FastAPI Server (WebSocket Data Broadcaster)
 ├── detection_engine/   # Rule engine + adaptive detection + Prometheus metrics
 ├── ml_engine/          # Isolation Forest training + feature engineering
 ├── evaluation/         # Comparative analysis (rule-only vs ML-only vs Hybrid)

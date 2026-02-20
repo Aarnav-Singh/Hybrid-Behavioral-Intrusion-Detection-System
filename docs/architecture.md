@@ -17,7 +17,8 @@ graph TD
     G1 & G2 & G3 --> H[Risk Aggregator]
     H --> I[Prometheus Metrics]
     H --> J[MLflow Model Registry]
-    H --> K[Streamlit Dashboard]
+    H --> K[FastAPI Backend]
+    K --> L[React Web Dashboard]
 ```
 
 ---

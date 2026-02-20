@@ -8,7 +8,7 @@
 >
 > The three scores are combined into a hybrid risk score. Anything above 0.85 triggers a CRITICAL alert.
 >
-> The system is fully observable via Prometheus, with a real-time Streamlit dashboard that switches between live Elasticsearch data and simulated mode for resilience.
+> The system is fully observable via Prometheus, with a real-time React web dashboard that switches between live Elasticsearch data and simulated mode for resilience.
 >
 > Key result: F1 of 0.97 with 1ms inference latency and 100% TPR on SQL injection and brute force scenarios."
 

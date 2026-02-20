@@ -96,10 +96,30 @@ if __name__ == "__main__":
     header("STEP 6/6 · Running Detection Benchmark")
     run([sys.executable, "detection_engine/benchmark.py"])
 
-    # ── Step 7: Launch Dashboard ────────────────────────────────────────────
-    header("LAUNCHING DASHBOARD")
-    print("  Opening: http://localhost:8501")
-    print("  Press Ctrl+C to stop.\n")
-    run(["streamlit", "run", "dashboard/app.py",
-         "--server.port", "8501",
-         "--server.headless", "true"])
+    # ── Step 7: Launch Dashboard & API ──────────────────────────────────────
+    header("STEP 7/7 · Launching API Backend & React Dashboard")
+    print("  Starting FastAPI Backend on port 8888...")
+    api_proc = subprocess.Popen(
+        [sys.executable, "-m", "uvicorn", "backend.server:app", "--port", "8888", "--host", "127.0.0.1"],
+        cwd=ROOT
+    )
+
+    print("  Starting React Frontend on port 5173...")
+    frontend_proc = subprocess.Popen(
+        "npm run dev",
+        cwd=os.path.join(ROOT, "frontend"),
+        shell=True
+    )
+
+    print("\n✅ System fully online! Access the CyberSentinel Command Center here:")
+    print("   👉 http://localhost:5173\n")
+    print("Press Ctrl+C to stop all servers.\n")
+
+    try:
+        api_proc.wait()
+        frontend_proc.wait()
+    except KeyboardInterrupt:
+        print("\nShutting down servers...")
+        api_proc.terminate()
+        frontend_proc.terminate()
+        sys.exit(0)

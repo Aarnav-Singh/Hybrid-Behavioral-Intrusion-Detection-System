@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # ──────────────────────────────────────────────
@@ -60,7 +60,8 @@ services:
     networks:
       - ids-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -96,9 +97,9 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.enable-lifecycle'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
     networks:
       - ids-network
 
@@ -141,12 +142,32 @@ services:
     networks:
       - ids-network
 
+  # ──────────────────────────────────────────────
+  # MongoDB - Storage for Cyberpunk Dashboard
+  # Required by the new FastAPI backend (server.py)
+  # ──────────────────────────────────────────────
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - ids-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
 volumes:
   es-data:
     driver: local
   prometheus-data:
     driver: local
   mlflow-data:
+    driver: local
+  mongo-data:
     driver: local
 
 networks:
