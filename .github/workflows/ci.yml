@@ -28,6 +28,7 @@ jobs:
             pandas numpy scikit-learn scipy joblib \
             mlflow elasticsearch \
             prometheus-client requests rich \
+            fastapi uvicorn motor websockets httpx python-dotenv \
             flake8 pytest
 
       - name: Lint with flake8
