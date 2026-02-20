@@ -514,9 +514,9 @@ class ErrorRateSpikeRule:
         profile_path:  str   = "data/baseline_profile.json",
     ):
         thresholds              = _load_thresholds(profile_path)
-        self.threshold_overall  = thresholds.get("error_rate_threshold", 0.30)
-        self.threshold_4xx      = thresholds.get("rate_4xx_threshold",   0.25)
-        self.threshold_5xx      = thresholds.get("rate_5xx_threshold",   0.10)
+        self.threshold_overall  = max(thresholds.get("error_rate_threshold", 0.30), 0.001)
+        self.threshold_4xx      = max(thresholds.get("rate_4xx_threshold",   0.25), 0.001)
+        self.threshold_5xx      = max(thresholds.get("rate_5xx_threshold",   0.10), 0.001)
         self.window_size        = window_size
         self.name               = "error_rate_spike"
 

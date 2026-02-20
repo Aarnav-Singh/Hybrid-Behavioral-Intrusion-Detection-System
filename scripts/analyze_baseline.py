@@ -153,8 +153,8 @@ def prepare_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     df["http_user_agent"]  = df.get("http_user_agent", pd.Series(dtype=str)).fillna("-")
 
     # Derived fields
-    df["minute"]           = df["timestamp"].dt.floor("T")
-    df["hour"]             = df["timestamp"].dt.floor("H")
+    df["minute"]           = df["timestamp"].dt.floor("min")
+    df["hour"]             = df["timestamp"].dt.floor("h")
     df["is_4xx"]           = df["status"].between(400, 499, inclusive="both")
     df["is_5xx"]           = df["status"].between(500, 599, inclusive="both")
     df["is_error"]         = df["status"] >= 400
@@ -221,7 +221,7 @@ def analyze_request_frequency(df: pd.DataFrame) -> Dict:
     # Kolmogorov-Smirnov test against Poisson
     # Fit Poisson lambda = mean (MLE for Poisson)
     lambda_mle = mean
-    theoretical_cdf = lambda x: poisson.cdf(int(x), lambda_mle)
+    theoretical_cdf = lambda x: poisson.cdf(np.floor(x), lambda_mle)
     ks_stat, ks_p = kstest(values, theoretical_cdf)
     fits_poisson = ks_p > 0.05
 

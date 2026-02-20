@@ -240,34 +240,38 @@ async def get_system_metrics():
     es_state = ["ok", "Connected"] if es_up else ["warn", "Offline"]
     fb_state = ["ok", "Shipping"] if es_up else ["warn", "Unknown"]
 
-    de_ok = False
-    try:
-        resp = await http_client.get("http://localhost:8000/metrics", timeout=1.0)
-        if resp.status_code == 200:
-            de_ok = True
-            lines = resp.text.split('\n')
-            for line in lines:
-                if "ids_alerts_total" in line and not line.startswith('#'):
-                    ids_stats["total_alerts"] = int(float(line.split()[-1]))
-                if "ids_active_threats_gauge" in line and not line.startswith('#'):
-                    ids_stats["active_threats"] = int(float(line.split()[-1]))
-    except: pass
+    async def check_de():
+        try:
+            resp = await http_client.get("http://localhost:8000/metrics", timeout=1.0)
+            if resp.status_code == 200:
+                stats = {"total_alerts": 0, "active_threats": 0}
+                for line in resp.text.split('\n'):
+                    if "ids_alerts_total" in line and not line.startswith('#'):
+                        stats["total_alerts"] = int(float(line.split()[-1]))
+                    if "ids_active_threats_gauge" in line and not line.startswith('#'):
+                        stats["active_threats"] = int(float(line.split()[-1]))
+                return True, stats
+        except: pass
+        return False, {"total_alerts": 0, "active_threats": 0}
+
+    async def check_prom():
+        try:
+            resp = await http_client.get("http://localhost:9090/-/healthy", timeout=1.0)
+            return resp.status_code == 200
+        except: return False
+
+    async def check_kib():
+        try:
+            resp = await http_client.get("http://localhost:5601/api/status", timeout=1.0)
+            return resp.status_code == 200
+        except: return False
+
+    de_res, prom_ok, kib_ok = await asyncio.gather(check_de(), check_prom(), check_kib())
+    de_ok, ids_stats = de_res
 
     de_state = ["ok", "Active"] if de_ok else ["warn", "Offline"]
     ml_state = ["ok", "Loaded"] if de_ok else ["warn", "Unknown"]
-
-    prom_ok = False
-    try:
-        resp = await http_client.get("http://localhost:9090/-/healthy", timeout=1.0)
-        if resp.status_code == 200: prom_ok = True
-    except: pass
     prom_state = ["ok", "Healthy"] if prom_ok else ["warn", "Offline"]
-
-    kib_ok = False
-    try:
-        resp = await http_client.get("http://localhost:5601/api/status", timeout=1.0)
-        if resp.status_code == 200: kib_ok = True
-    except: pass
     kib_state = ["ok", "Running"] if kib_ok else ["warn", "Starting..."]
 
     return {

@@ -1,0 +1,49 @@
+
+--- STDERR ---
+2026-02-20 16:54:13,581 [INFO] ids.benchmark: ╔══════════════════════════════════════════════════════════╗
+2026-02-20 16:54:13,581 [INFO] ids.benchmark: ║    HYBRID IDS — RULE BENCHMARK                          ║
+2026-02-20 16:54:13,581 [INFO] ids.benchmark: ╚══════════════════════════════════════════════════════════╝
+2026-02-20 16:54:13,581 [INFO] ids.benchmark:   Scenarios: ['dos', 'brute_force', 'sql_injection', 'path_traversal', 'error_spike']
+2026-02-20 16:54:13,581 [INFO] ids.rules: [sql_injection] 11 patterns loaded
+2026-02-20 16:54:13,581 [INFO] ids.rules: [path_traversal] 10 patterns loaded
+2026-02-20 16:54:13,582 [INFO] ids.rules: [login_brute_force] threshold=10 failures/60s
+2026-02-20 16:54:13,582 [INFO] ids.rules: [rate_limit] threshold=8.31 req/min (from baseline)
+2026-02-20 16:54:13,582 [INFO] ids.rules: [error_rate_spike] thresholds: overall=370.59%, 4xx=370.59%, 5xx=0.00% (window=100 events)
+2026-02-20 16:54:13,582 [INFO] ids.benchmark: 
+════════════════════════════════════════════════════════════
+2026-02-20 16:54:13,582 [INFO] ids.benchmark:   SCENARIO: DOS
+2026-02-20 16:54:13,582 [INFO] ids.benchmark: ════════════════════════════════════════════════════════════
+2026-02-20 16:54:13,583 [INFO] ids.benchmark:   Events: 300 total (200 attack, 100 normal)
+2026-02-20 16:54:13,590 [INFO] ids.benchmark:   [sql_injection         ] TPR=0.00% ✗  FPR=0.00% ✓  F1=0.000  lat_p95=0.01ms
+2026-02-20 16:54:13,592 [INFO] ids.benchmark:   [path_traversal        ] TPR=0.00% ✗  FPR=0.00% ✓  F1=0.000  lat_p95=0.01ms
+2026-02-20 16:54:13,593 [INFO] ids.benchmark:   [login_brute_force     ] TPR=0.00% ✗  FPR=0.00% ✓  F1=0.000  lat_p95=0.00ms
+2026-02-20 16:54:13,598 [INFO] ids.benchmark:   [rate_limit            ] TPR=100.00% ✓  FPR=0.00% ✓  F1=1.000  lat_p95=0.02ms
+2026-02-20 16:54:13,601 [INFO] ids.benchmark:   [error_rate_spike      ] TPR=0.00% ✗  FPR=0.00% ✓  F1=0.000  lat_p95=0.01ms
+2026-02-20 16:54:13,601 [INFO] ids.benchmark: 
+════════════════════════════════════════════════════════════
+2026-02-20 16:54:13,601 [INFO] ids.benchmark:   SCENARIO: BRUTE_FORCE
+2026-02-20 16:54:13,601 [INFO] ids.benchmark: ════════════════════════════════════════════════════════════
+2026-02-20 16:54:13,601 [INFO] ids.benchmark:   Events: 150 total (50 attack, 100 normal)
+2026-02-20 16:54:13,603 [INFO] ids.benchmark:   [sql_injection         ] TPR=0.00% ✗  FPR=0.00% ✓  F1=0.000  lat_p95=0.01ms
+2026-02-20 16:54:13,604 [INFO] ids.benchmark:   [path_traversal        ] TPR=0.00% ✗  FPR=0.00% ✓  F1=0.000  lat_p95=0.01ms
+2026-02-20 16:54:13,605 [INFO] ids.benchmark:   [login_brute_force     ] TPR=100.00% ✓  FPR=0.00% ✓  F1=1.000  lat_p95=0.01ms
+2026-02-20 16:54:13,608 [INFO] ids.benchmark:   [rate_limit            ] TPR=100.00% ✓  FPR=100.00% ✗  F1=0.500  lat_p95=0.02ms
+2026-02-20 16:54:13,610 [INFO] ids.benchmark:   [error_rate_spike      ] TPR=0.00% ✗  FPR=0.00% ✓  F1=0.000  lat_p95=0.01ms
+2026-02-20 16:54:13,610 [INFO] ids.benchmark: 
+════════════════════════════════════════════════════════════
+2026-02-20 16:54:13,610 [INFO] ids.benchmark:   SCENARIO: SQL_INJECTION
+2026-02-20 16:54:13,610 [INFO] ids.benchmark: ════════════════════════════════════════════════════════════
+2026-02-20 16:54:13,610 [INFO] ids.benchmark:   Events: 180 total (30 attack, 150 normal)
+2026-02-20 16:54:13,612 [INFO] ids.benchmark:   [sql_injection         ] TPR=100.00% ✓  FPR=0.00% ✓  F1=1.000  lat_p95=0.02ms
+2026-02-20 16:54:13,613 [INFO] ids.benchmark:   [path_traversal        ] TPR=0.00% ✗  FPR=0.00% ✓  F1=0.000  lat_p95=0.01ms
+2026-02-20 16:54:13,614 [INFO] ids.benchmark:   [login_brute_force     ] TPR=0.00% ✗  FPR=0.00% ✓  F1=0.000  lat_p95=0.00ms
+2026-02-20 16:54:13,618 [INFO] ids.benchmark:   [rate_limit            ] TPR=100.00% ✓  FPR=100.00% ✗  F1=0.286  lat_p95=0.02ms
+Traceback (most recent call last):
+  File "C:\Hybrid Intrusion Detection System\detection_engine\benchmark.py", line 554, in <module>
+    results = run_benchmark(rules=rules, scenario_names=scenarios)
+  File "C:\Hybrid Intrusion Detection System\detection_engine\benchmark.py", line 399, in run_benchmark
+    result = rule.detect(event, historical_data=None)
+  File "C:\Hybrid Intrusion Detection System\detection_engine\rules.py", line 575, in detect
+    if breach_5xx:     ratios.append(rate_5xx   / self.threshold_5xx)
+                                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+ZeroDivisionError: division by zero

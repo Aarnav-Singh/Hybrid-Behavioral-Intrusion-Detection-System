@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     # ── Step 3: Baseline traffic ────────────────────────────────────────────
     header("STEP 3/6 · Generating Baseline Traffic")
-    run([sys.executable, "scripts/baseline_traffic.py"])
+    run([sys.executable, "scripts/baseline_traffic.py", "--duration", "1"])
 
     # ── Step 4: Analyze baseline ────────────────────────────────────────────
     header("STEP 4/6 · Analyzing Baseline (creates baseline_profile.json)")
