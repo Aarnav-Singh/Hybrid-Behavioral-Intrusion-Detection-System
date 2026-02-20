@@ -171,9 +171,11 @@ def classify_request(log: dict) -> list[dict]:
 # Elasticsearch helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
+es_session = requests.Session()
+
 def es_get(es_host: str, path: str, **kwargs):
     try:
-        r = requests.get(f"{es_host}{path}", timeout=5, **kwargs)
+        r = es_session.get(f"{es_host}{path}", timeout=5, **kwargs)
         r.raise_for_status()
         return r.json()
     except Exception as e:
@@ -186,18 +188,26 @@ def get_alerts_index() -> str:
     return f"alerts-{datetime.now(timezone.utc).strftime('%Y.%m.%d')}"
 
 
-def es_index_alert(es_host: str, alert: dict):
+def es_bulk_index_alerts(es_host: str, alerts: list[dict]):
+    if not alerts:
+        return
     index = get_alerts_index()
+    bulk_data = []
+    for alert in alerts:
+        bulk_data.append(json.dumps({"index": {"_index": index, "_id": alert["_id"]}}))
+        bulk_data.append(json.dumps(alert))
+    bulk_payload = "\n".join(bulk_data) + "\n"
+    
     try:
-        r = requests.post(
-            f"{es_host}/{index}/_doc/{alert['_id']}",
-            json=alert,
-            headers={"Content-Type": "application/json"},
-            timeout=5,
+        r = es_session.post(
+            f"{es_host}/_bulk",
+            data=bulk_payload,
+            headers={"Content-Type": "application/x-ndjson"},
+            timeout=10,
         )
         r.raise_for_status()
     except Exception as e:
-        logger.warning(f"Failed to index alert into {index}: {e}")
+        logger.warning(f"Failed to bulk index {len(alerts)} alerts into {index}: {e}")
 
 
 def ensure_alerts_index(es_host: str):
@@ -225,7 +235,7 @@ def ensure_alerts_index(es_host: str):
         }
     }
     try:
-        r = requests.put(
+        r = es_session.put(
             f"{es_host}/{index}",
             json=mapping,
             headers={"Content-Type": "application/json"},
@@ -309,6 +319,7 @@ def main():
 
             last_ts = hits[-1]["_source"].get("@timestamp", last_ts)
             now_unix = time.time()
+            batch_alerts = []
 
             for hit in hits:
                 log = hit["_source"]
@@ -340,7 +351,7 @@ def main():
                             "ml_score":    min(0.99, 0.65 + req_per_min / (rate_limit * 5)),
                             "message":     f"DoS Flood: {src_ip} sent {req_per_min} req in 60s (limit={rate_limit})",
                         }
-                        es_index_alert(es_host, dos_alert)
+                        batch_alerts.append(dos_alert)
                         ALERTS_TOTAL.labels(attack_type="DoS Flood", severity=dos_alert["severity"]).inc()
                         active_ips.add(src_ip)
                         logger.info(f"ALERT DoS Flood from {src_ip} ({req_per_min} req/min)")
@@ -353,7 +364,7 @@ def main():
                 INFERENCE_LATENCY.labels(model_name="heuristic").observe(latency)
 
                 for alert in alerts:
-                    es_index_alert(es_host, alert)
+                    batch_alerts.append(alert)
                     ALERTS_TOTAL.labels(
                         attack_type=alert["attack_type"],
                         severity=alert["severity"],
@@ -362,6 +373,9 @@ def main():
                     logger.info(
                         f"ALERT [{alert['severity']}] {alert['attack_type']} from {alert['source_ip']}"
                     )
+
+            if batch_alerts:
+                es_bulk_index_alerts(es_host, batch_alerts)
 
             ACTIVE_THREATS.set(len(active_ips))
             # Decay active IPs (remove if not seen in 5 min)

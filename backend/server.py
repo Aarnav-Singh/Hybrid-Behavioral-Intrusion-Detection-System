@@ -168,6 +168,7 @@ async def get_real_alerts(limit: int = 50):
             "size": limit,
             "sort": [{"@timestamp": {"order": "desc"}}],
             "query": {"range": {"@timestamp": {"gte": "now-24h"}}},
+            "_source": ["@timestamp", "severity", "source_ip", "dest_ip", "proto", "attack_type", "message", "risk_score"]
         }
         resp = await http_client.post(f"{ES_HOST}/{ALERTS_INDEX}/_search", json=body, timeout=3.0)
         hits = resp.json().get("hits", {}).get("hits", [])
@@ -210,6 +211,7 @@ async def get_real_packets(limit: int = 100):
             "size": limit,
             "sort": [{"@timestamp": {"order": "desc"}}],
             "query": {"range": {"@timestamp": {"gte": "now-1h"}}},
+            "_source": ["@timestamp", "clientip", "remote_addr", "bytes", "body_bytes_sent", "verb", "request_method", "request", "request_uri"]
         }
         resp = await http_client.post(f"{ES_HOST}/{LOGS_INDEX}/_search", json=body, timeout=3.0)
         hits = resp.json().get("hits", {}).get("hits", [])
@@ -399,21 +401,46 @@ async def get_alerts_endpoint(limit: int = 50, severity: Optional[str] = None):
 
 @app.get("/api/alerts/stats")
 async def get_alert_stats():
-    # If using Elasticsearch, we could run an aggregation.
-    # For now, we fetch a larger pool and aggregate in memory to keep it simple and robust,
-    # or rely on the mock data if ES is down.
-    alerts = await get_real_alerts(limit=500)
-    stats = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0}
-    for a in alerts:
-        sev = a.get("severity", "INFO").upper()
-        if sev in stats:
-            stats[sev] += 1
-        else:
-            stats[sev] = 1
+    # If using Elasticsearch, we run an aggregation.
+    if not await fetch_es_health():
+        alerts = STATIC_MOCK_ALERTS[:500]
+        stats = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0}
+        for a in alerts:
+            sev = a.get("severity", "INFO").upper()
+            if sev in stats:
+                stats[sev] += 1
+            else:
+                stats[sev] = 1
+        return {"stats": stats, "total": sum(stats.values())}
+
+    try:
+        body = {
+            "size": 0,
+            "query": {"range": {"@timestamp": {"gte": "now-24h"}}},
+            "aggs": {
+                "by_severity": {
+                    "terms": {"field": "severity.keyword", "size": 10}
+                }
+            }
+        }
+        resp = await http_client.post(f"{ES_HOST}/{ALERTS_INDEX}/_search", json=body, timeout=3.0)
+        buckets = resp.json().get("aggregations", {}).get("by_severity", {}).get("buckets", [])
+        
+        stats = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0}
+        total = 0
+        for b in buckets:
+            sev = str(b["key"]).upper()
+            count = b["doc_count"]
+            if sev in stats:
+                stats[sev] += count
+            else:
+                stats[sev] = count
+            total += count
             
-    # Remove empty severities if you want, or keep them to ensure UI has keys
-    total = sum(stats.values())
-    return {"stats": stats, "total": total}
+        return {"stats": stats, "total": total}
+    except Exception as e:
+        print(f"ES Stats Error: {e}")
+        return {"stats": {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0}, "total": 0}
 
 @app.patch("/api/alerts/{alert_id}")
 async def update_alert_status(alert_id: str, status: str):
