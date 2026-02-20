@@ -42,7 +42,7 @@ graph TD
 Engineered features extracted per time window:
 
 | Feature | Description |
-|---|---|
+| --- | --- |
 | `request_rate` | Requests per second in sliding window |
 | `error_rate` | Ratio of 4xx/5xx responses |
 | `unique_endpoints` | Count of distinct paths accessed |
@@ -65,7 +65,18 @@ The engine resolves scores using a three-stage pipeline:
 - `AGGRESSIVE`: High recall, immediate alerting on mild anomalies.
 - `DRIFT-SENSITIVE`: Automatically prioritizes rules when model drift is high.
 
-### 5. Adaptive Detection (`detection_engine/adaptive_detection.py`)
+### 5. Explainability Layer (`ml_engine/explainer.py`)
+
+HB-IDS provides high-fidelity explanations for every detected anomaly:
+
+- **SHAP (SHapley Additive exPlanations)**: Breaks down the contribution of each feature (e.g., `payload_entropy`, `request_rate`) to the anomaly score.
+- **Decision Traces**: A structured JSON object embedded in every alert that records:
+  - Raw detector inputs
+  - Calibrated probabilities
+  - Fusion weights used at the moment of detection
+  - The specific fusion logic applied (e.g., `weighted_sum` vs `rule_override`)
+
+### 6. Adaptive Detection (`detection_engine/adaptive_detection.py`)
 
 - Monitors FPR per rule over time
 - Adjusts thresholds using exponential moving average
@@ -91,7 +102,7 @@ The engine resolves scores using a three-stage pipeline:
 ## Data Retention & Storage Estimates
 
 | Data Type | Volume | Retention |
-|---|---|---|
+| --- | --- | --- |
 | Nginx access logs | ~50KB/1000 req | 7 days |
 | Detection alerts | ~2KB/alert | 30 days |
 | ML model artifacts | ~5MB/model | All versions |

@@ -30,7 +30,7 @@ graph LR
 ### Detection Layers (Elite Hybrid Mode)
 
 | Layer | Method | Description |
-|---|---|---|
+| --- | --- | --- |
 | **Layer 1** | Rule Engine | Deterministic signature matching with Gated Overrides |
 | **Layer 2** | Isolation Forest | Probabilistic anomaly scoring with Confidence Calibration |
 | **Layer 3** | Behavioral | Drift-aware baseline deviation analysis |
@@ -47,7 +47,7 @@ HB-IDS uses a Context-Aware Adaptive Fusion engine (`AdaptiveHybridScorer`) that
 ## ⚙️ Technology Stack
 
 | Category | Technologies |
-|---|---|
+| --- | --- |
 | **Core Detection** | Python, Pandas, SciPy, Scikit-learn |
 | **Telemetry & Storage** | Filebeat, Elasticsearch 8.x |
 | **ML Lifecycle** | MLflow (experiment tracking + model registry) |
@@ -62,6 +62,9 @@ HB-IDS uses a Context-Aware Adaptive Fusion engine (`AdaptiveHybridScorer`) that
 ## 🚀 Features
 
 - ✅ **Hybrid detection** — Rules + ML (Isolation Forest) + Behavioral baseline
+- ✅ **SHAP Explainability** — Feature-level importance for every anomaly alert
+- ✅ **Decision Traces** — Full audit trail of detector contributions and fusion weights
+- ✅ **Real-world Dataset Support** — Support for CIC-IDS2017 and UNSW-NB15 benchmarking
 - ✅ **Drift detection** — PSI + KL divergence with scheduled retraining
 - ✅ **MLflow model registry** — Full experiment tracking and rollback
 - ✅ **Prometheus observability** — Inference latency, TPR, FPR, event throughput
@@ -73,7 +76,7 @@ HB-IDS uses a Context-Aware Adaptive Fusion engine (`AdaptiveHybridScorer`) that
 ---
 
 | Metric | Value (Mean ± Std) |
-|---|---|
+| --- | --- |
 | **Hybrid F1 Score** | 0.9776 ± 0.0020 |
 | **Detection Rate (TPR)** | 98.2% ± 0.015 |
 | **False Positive Rate** | 0.0036 ± 0.0000 |
@@ -85,7 +88,7 @@ HB-IDS uses a Context-Aware Adaptive Fusion engine (`AdaptiveHybridScorer`) that
 ## 🧪 Failure Handling
 
 | Failure Mode | Response |
-|---|---|
+| --- | --- |
 | ML service down | Automatic fallback to rule engine |
 | Elasticsearch unavailable | Dashboard switches to simulated data; queue buffering in engine |
 | Traffic spike | Stateless detection services scale horizontally |
@@ -117,7 +120,7 @@ python run_project.py
 ### Service URLs
 
 | Service | URL |
-|---|---|
+| --- | --- |
 | **React Dashboard** | <http://localhost:5173> |
 | **FastAPI Backend** | <http://localhost:8888/docs> |
 | **Prometheus** | <http://localhost:9090> |
@@ -130,18 +133,18 @@ python run_project.py
 
 ## 📁 Project Structure
 
-```
+```text
 ├── frontend/           # React + Vite Command Center SPA
 ├── backend/            # FastAPI Server (WebSocket Data Broadcaster)
 ├── detection_engine/   # Rule engine + adaptive detection + Prometheus metrics
 ├── ml_engine/          # Isolation Forest training + feature engineering
-├── evaluation/         # Comparative analysis (rule-only vs ML-only vs Hybrid)
+├── evaluation/         # Comparative analysis (CIC-IDS2017, UNSW-NB15 support)
 ├── adversarial/        # Evasion techniques + concept drift simulation
 ├── chaos_tests/        # Failure mode testing framework
 ├── attacks/            # Locust load testing scripts
 ├── scripts/            # Baseline traffic generator + analyzer
 ├── infrastructure/     # Prometheus, Filebeat, Kubernetes configs
-├── docs/               # Deep-dive documentation
+├── docs/               # Deep-dive documentation and research papers
 └── docker-compose.yml  # Full stack orchestration
 ```
 
@@ -150,7 +153,7 @@ python run_project.py
 ## 🎯 Design Tradeoffs
 
 | Decision | Rationale |
-|---|---|
+| --- | --- |
 | **Hybrid over deep learning** | Interpretability + low training data requirement + faster inference |
 | **Elasticsearch over raw DB** | Full-text search on logs, aggregations, Kibana visualization |
 | **MLflow** | Reproducibility, model versioning, A/B experiment tracking |
@@ -163,7 +166,7 @@ python run_project.py
 ## 📄 Documentation
 
 | Document | Description |
-|---|---|
+| --- | --- |
 | [Architecture Deep Dive](docs/architecture.md) | System design, data flow, scaling |
 | [ML Pipeline](docs/ml-deep-dive.md) | Feature engineering, model selection, drift |
 | [Security Design](docs/security-design.md) | Threat model, SOC alignment, hardening |
