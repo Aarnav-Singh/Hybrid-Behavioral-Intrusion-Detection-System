@@ -33,10 +33,10 @@ jobs:
       - name: Lint with flake8
         run: |
           # Stop the build on syntax errors or undefined names
-          flake8 ml_engine/ detection_engine/ dashboard/ scripts/ \
+          flake8 ml_engine/ detection_engine/ backend/ scripts/ \
             --count --select=E9,F63,F7,F82 --show-source --statistics
           # Full lint with warnings only (don't fail on style)
-          flake8 ml_engine/ detection_engine/ dashboard/ scripts/ \
+          flake8 ml_engine/ detection_engine/ backend/ scripts/ \
             --count --exit-zero --max-line-length=120 --statistics
 
       - name: Run unit tests
@@ -51,8 +51,8 @@ jobs:
           sys.path.insert(0, '.')
           from ml_engine import features
           print('ml_engine.features import OK')
-          from dashboard import data
-          print('dashboard.data import OK')
+          from backend import server
+          print('backend.server import OK')
           from detection_engine import rules
           print('detection_engine.rules import OK')
           "
@@ -81,5 +81,5 @@ jobs:
 
       - name: Run bandit security scan
         run: |
-          bandit -r ml_engine/ detection_engine/ dashboard/ scripts/ \
+          bandit -r ml_engine/ detection_engine/ backend/ scripts/ \
             -ll --format txt || echo "Bandit scan complete (review output above)"
