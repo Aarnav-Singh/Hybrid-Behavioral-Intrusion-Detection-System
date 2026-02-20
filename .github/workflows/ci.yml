@@ -42,8 +42,8 @@ jobs:
 
       - name: Run unit tests
         run: |
-          # Run any test files discovered by pytest
-          pytest tests/ -v --tb=short 2>/dev/null || echo "No tests directory yet — skipping"
+          # Run identified unit tests
+          pytest tests/test_fusion.py tests/test_ml_engine.py -v --tb=short
 
       - name: Test ML engine import
         run: |

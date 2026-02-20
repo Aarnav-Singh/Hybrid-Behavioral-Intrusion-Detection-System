@@ -135,6 +135,16 @@ class TemporalConfirmationWindow:
 # ---------------------------------------------------------------------------
 
 @dataclass
+class DecisionTrace:
+    raw_ml: float
+    raw_z: float
+    rule_triggered: bool
+    ml_contribution: float
+    rule_contribution: float
+    behavior_contribution: float
+    fusion_logic: str = "weighted_sum"
+
+@dataclass
 class FusionResult:
     final_score: float
     alert_level: str           # "none" | "low" | "medium" | "high" | "critical"
@@ -143,6 +153,7 @@ class FusionResult:
     drift_regime: str
     escalated: bool
     explanation: str
+    decision_trace: Optional[DecisionTrace] = None
 
 
 ALERT_THRESHOLDS = {
@@ -232,6 +243,15 @@ class AdaptiveHybridScorer:
             f"| escalated={escalated}"
         )
 
+        trace = DecisionTrace(
+            raw_ml = ml_raw_score,
+            raw_z = z_score,
+            rule_triggered = rule_triggered,
+            ml_contribution = weights.ml * p_ml,
+            rule_contribution = weights.rule * p_rule,
+            behavior_contribution = weights.behavior * p_behavior
+        )
+
         return FusionResult(
             final_score   = round(final_score, 4),
             alert_level   = alert_level,
@@ -240,6 +260,7 @@ class AdaptiveHybridScorer:
             drift_regime  = self.weight_adapter.regime,
             escalated     = escalated,
             explanation   = explanation,
+            decision_trace = trace,
         )
 
 

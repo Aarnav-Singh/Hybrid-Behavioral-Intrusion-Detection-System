@@ -57,8 +57,10 @@ class AggregateResult:
         )
 
 
+from evaluation.data_loader import IDSDataLoader
+
 # ---------------------------------------------------------------------------
-# Synthetic Dataset Generator (replace with your real data loader)
+# Dataset Generator
 # ---------------------------------------------------------------------------
 
 def generate_dataset(
@@ -66,14 +68,21 @@ def generate_dataset(
     attack_ratio: float = 0.15,
     seed: int = 42,
     drift_factor: float = 0.0,
+    dataset_name: Optional[str] = None
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Generates a synthetic IDS dataset.
+    Generates or loads an IDS dataset.
     Features: [ml_score, z_score, rule_score]
 
-    Replace this function with your real dataset loader.
-    drift_factor (0–1): shifts normal distribution to simulate concept drift.
+    dataset_name: 'cicids2017' or 'unsw_nb15' to load real data.
     """
+    if dataset_name:
+        loader = IDSDataLoader()
+        if dataset_name.lower() == "cicids2017":
+            return loader.load_cicids2017()
+        elif dataset_name.lower() == "unsw_nb15":
+            return loader.load_unsw_nb15()
+
     rng = np.random.default_rng(seed)
     n_attack = int(n_samples * attack_ratio)
     n_normal = n_samples - n_attack
