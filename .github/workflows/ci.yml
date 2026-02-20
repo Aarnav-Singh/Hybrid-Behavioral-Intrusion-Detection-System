@@ -45,6 +45,11 @@ jobs:
           # Run identified unit tests
           pytest tests/test_fusion.py tests/test_ml_engine.py -v --tb=short
 
+      - name: Verify Research Quality Gate
+        run: |
+          # Ensure model performance meets research standards
+          python scripts/quality_gate.py
+
       - name: Test ML engine import
         run: |
           python -c "

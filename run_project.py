@@ -72,44 +72,44 @@ def header(title: str):
 if __name__ == "__main__":
     header("HYBRID BEHAVIORAL IDS — FULL PROJECT LAUNCHER")
 
+    # ── Step 0: Data Preparation ───────────────────────────────────────────
+    header("STEP 0/8 · Preparing Research Datasets")
+    run([sys.executable, "scripts/fetch_datasets.py"])
+
     # ── Step 1: Docker ──────────────────────────────────────────────────────
-    header("STEP 1/6 · Starting Docker Stack")
+    header("STEP 1/8 · Starting Docker Stack")
     run(["docker", "compose", "up", "-d"])
 
     # ── Step 2: Elasticsearch health check ─────────────────────────────────
-    header("STEP 2/6 · Waiting for Elasticsearch")
+    header("STEP 2/8 · Waiting for Elasticsearch")
     es_ok = wait_for_elasticsearch()
 
     # ── Step 3: Baseline traffic ────────────────────────────────────────────
-    header("STEP 3/6 · Generating Baseline Traffic")
+    header("STEP 3/8 · Generating Baseline Traffic")
     run([sys.executable, "scripts/baseline_traffic.py", "--duration", "1"])
 
     # ── Step 4: Analyze baseline ────────────────────────────────────────────
-    header("STEP 4/6 · Analyzing Baseline (creates baseline_profile.json)")
+    header("STEP 4/8 · Analyzing Baseline (creates baseline_profile.json)")
     run([sys.executable, "scripts/analyze_baseline.py"])
 
     # ── Step 5: Train ML Model ──────────────────────────────────────────────
-    header("STEP 5/6 · Training ML Model (quick mode)")
+    header("STEP 5/8 · Training ML Model (quick mode)")
     run([sys.executable, "ml_engine/train.py", "--quick"])
 
+    # ── Step 5.1: Explainability ───────────────────────────────────────────
+    header("STEP 5.1 · Generating Global SHAP Importance")
+    run([sys.executable, "ml_engine/explainer.py"])
+
     # ── Step 6: Run benchmark ───────────────────────────────────────────────
-    header("STEP 6/6 · Running Detection Benchmark")
+    header("STEP 6/8 · Running Detection Benchmark")
     run([sys.executable, "detection_engine/benchmark.py"])
 
-    # ── Step 6.1: Research-Grade Evaluation ──────────────────────────────────
-    header("STEP 6.1 · Multi-run Evaluation & Ablation Study")
+    # ── Step 7: Research-Grade Evaluation ──────────────────────────────────
+    header("STEP 7/8 · Multi-run Evaluation & Ablation Study")
     run([sys.executable, "evaluation/evaluate.py"])
 
-    # ── Step 6.2: Adversarial Robustness ─────────────────────────────────────
-    header("STEP 6.2 · Adversarial Attack Simulations")
-    run([sys.executable, "adversarial/adversarial_sim.py"])
-
-    # ── Step 6.3: Production Scalability ─────────────────────────────────────
-    header("STEP 6.3 · Streaming Benchmark & Scalability Test")
-    run([sys.executable, "detection_engine/production_layer.py"])
-
-    # ── Step 7: Launch Dashboard & API ──────────────────────────────────────
-    header("STEP 7/7 · Launching API Backend & React Dashboard")
+    # ── Step 8: Launch Dashboard & API ──────────────────────────────────────
+    header("STEP 8/8 · Launching API Backend & React Dashboard")
     print("  Starting FastAPI Backend on port 8888...")
     api_proc = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "backend.server:app", "--port", "8888", "--host", "127.0.0.1"],

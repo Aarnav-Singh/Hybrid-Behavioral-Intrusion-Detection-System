@@ -62,3 +62,21 @@ class MLIDSExplainer:
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         plt.savefig(save_path, dpi=150)
         plt.close()
+
+if __name__ == "__main__":
+    # Standard HB-IDS features
+    FEATURES = [
+        "request_rate", "error_rate", "payload_entropy", "path_depth",
+        "unique_ips", "session_velocity", "auth_failure_rate", 
+        "byte_ratio", "ua_entropy", "baseline_deviation"
+    ]
+    
+    print("\n[EXPLAINER] Initializing Global SHAP Summary...")
+    explainer = MLIDSExplainer()
+    
+    # Generate background data for summary
+    rng = np.random.default_rng(42)
+    X_bg = rng.normal(loc=0.5, scale=0.2, size=(100, 10)).clip(0, 1)
+    
+    explainer.get_feature_importance(X_bg, FEATURES)
+    print("  [SUCCESS] Global SHAP summary saved to reports/shap_summary.png\n")

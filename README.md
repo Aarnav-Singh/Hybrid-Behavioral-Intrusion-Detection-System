@@ -62,9 +62,10 @@ HB-IDS uses a Context-Aware Adaptive Fusion engine (`AdaptiveHybridScorer`) that
 ## 🚀 Features
 
 - ✅ **Hybrid detection** — Rules + ML (Isolation Forest) + Behavioral baseline
-- ✅ **SHAP Explainability** — Feature-level importance for every anomaly alert
-- ✅ **Decision Traces** — Full audit trail of detector contributions and fusion weights
-- ✅ **Real-world Dataset Support** — Support for CIC-IDS2017 and UNSW-NB15 benchmarking
+- ✅ **Deep SHAP Explainability** — Real-time feature importance & global model insights
+- ✅ **Decision Traces** — Full audit trail of detector weights and fusion logic
+- ✅ **Automated Benchmarking** — Integrated CIC-IDS2017 & UNSW-NB15 sample pipelines
+- ✅ **CI/CD Quality Gates** — Automated verification of research-grade F1/TPR thresholds
 - ✅ **Drift detection** — PSI + KL divergence with scheduled retraining
 - ✅ **MLflow model registry** — Full experiment tracking and rollback
 - ✅ **Prometheus observability** — Inference latency, TPR, FPR, event throughput
@@ -138,11 +139,11 @@ python run_project.py
 ├── backend/            # FastAPI Server (WebSocket Data Broadcaster)
 ├── detection_engine/   # Rule engine + adaptive detection + Prometheus metrics
 ├── ml_engine/          # Isolation Forest training + feature engineering
-├── evaluation/         # Comparative analysis (CIC-IDS2017, UNSW-NB15 support)
+├── evaluation/         # Comparative analysis & dataset benchmarking
 ├── adversarial/        # Evasion techniques + concept drift simulation
 ├── chaos_tests/        # Failure mode testing framework
 ├── attacks/            # Locust load testing scripts
-├── scripts/            # Baseline traffic generator + analyzer
+├── scripts/            # Dataset fetchers, baseline generators, quality gates
 ├── infrastructure/     # Prometheus, Filebeat, Kubernetes configs
 ├── docs/               # Deep-dive documentation and research papers
 └── docker-compose.yml  # Full stack orchestration
