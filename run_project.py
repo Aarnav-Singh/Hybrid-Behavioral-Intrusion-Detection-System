@@ -96,6 +96,18 @@ if __name__ == "__main__":
     header("STEP 6/6 · Running Detection Benchmark")
     run([sys.executable, "detection_engine/benchmark.py"])
 
+    # ── Step 6.1: Research-Grade Evaluation ──────────────────────────────────
+    header("STEP 6.1 · Multi-run Evaluation & Ablation Study")
+    run([sys.executable, "evaluation/evaluate.py"])
+
+    # ── Step 6.2: Adversarial Robustness ─────────────────────────────────────
+    header("STEP 6.2 · Adversarial Attack Simulations")
+    run([sys.executable, "adversarial/adversarial_sim.py"])
+
+    # ── Step 6.3: Production Scalability ─────────────────────────────────────
+    header("STEP 6.3 · Streaming Benchmark & Scalability Test")
+    run([sys.executable, "detection_engine/production_layer.py"])
+
     # ── Step 7: Launch Dashboard & API ──────────────────────────────────────
     header("STEP 7/7 · Launching API Backend & React Dashboard")
     print("  Starting FastAPI Backend on port 8888...")
