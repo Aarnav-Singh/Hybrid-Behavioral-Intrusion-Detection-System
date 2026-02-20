@@ -9,7 +9,7 @@ def test_fusion_normal_ops():
     
     assert isinstance(res, FusionResult)
     assert res.alert_level in ["none", "low"]
-    assert res.escalated is False
+    assert not res.escalated
     assert res.decision_trace is not None
 
 def test_fusion_escalation():
@@ -19,7 +19,7 @@ def test_fusion_escalation():
     scorer.score("attacker", 3.1, 4.1, True)
     res = scorer.score("attacker", 3.2, 4.2, True)
     
-    assert res.escalated is True
+    assert res.escalated
     assert res.alert_level in ["high", "critical"]
 
 def test_drift_weight_adaptation():
