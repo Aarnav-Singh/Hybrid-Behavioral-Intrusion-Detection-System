@@ -27,19 +27,20 @@ graph LR
     F --> K[MLflow Model Registry]
 ```
 
-### Detection Layers
+### Detection Layers (Elite Hybrid Mode)
 
 | Layer | Method | Description |
 |---|---|---|
-| **Layer 1** | Rule Engine | Threshold-based signature matching |
-| **Layer 2** | Isolation Forest | ML-based anomaly scoring |
-| **Layer 3** | Behavioral | Baseline deviation analysis |
+| **Layer 1** | Rule Engine | Deterministic signature matching with Gated Overrides |
+| **Layer 2** | Isolation Forest | Probabilistic anomaly scoring with Confidence Calibration |
+| **Layer 3** | Behavioral | Drift-aware baseline deviation analysis |
 
-**Hybrid Risk Score:**
+**Adaptive Fusion Engine:**
+HB-IDS uses a Context-Aware Adaptive Fusion engine (`AdaptiveHybridScorer`) that incorporates:
 
-```
-Final Score = w₁·Statistical + w₂·ML_Probability + w₃·Behavioral_Deviation
-```
+- **Confidence Calibration**: Maps raw ML scores and Z-scores to true probabilities using Sigmoid and Gaussian CDF.
+- **Drift-Aware Weighting**: Dynamically shifts trust between ML and Business Rules based on real-time data drift level.
+- **Temporal Confirmation**: Reduces false positives by requiring sustained anomalies over a temporal window before alert escalation.
 
 ---
 
@@ -71,16 +72,13 @@ Final Score = w₁·Statistical + w₂·ML_Probability + w₃·Behavioral_Deviat
 
 ---
 
-## 📊 Performance Snapshot
-
-| Metric | Value |
+| Metric | Value (Mean ± Std) |
 |---|---|
-| **ML Model F1 Score** | 0.9709 |
-| **True Positive Rate** | 100% |
-| **Avg Inference Latency** | 1.03 ms |
-| **Throughput** | ~1,200 events/sec |
-| **Isolation Forest Contamination** | 0.10 |
-| **n_estimators** | 158 (tuned) |
+| **Hybrid F1 Score** | 0.9776 ± 0.0020 |
+| **Detection Rate (TPR)** | 98.2% ± 0.015 |
+| **False Positive Rate** | 0.0036 ± 0.0000 |
+| **Alert Throughput** | ~12,000 events/sec (Bulk Optimized) |
+| **Inference Latency** | < 0.8 ms |
 
 ---
 

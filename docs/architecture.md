@@ -51,19 +51,19 @@ Engineered features extracted per time window:
 | `baseline_deviation` | Z-score vs. historical baseline |
 | `byte_ratio` | Response bytes / request rate |
 
-### 4. Hybrid Detection Engine (`detection_engine/`)
+### 4. Adaptive Hybrid Fusion Engine (`detection_engine/adaptive_fusion.py`)
 
-**Hybrid Risk Formula:**
+The engine resolves scores using a three-stage pipeline:
 
-```
-Risk_Score = 0.3 × Rule_Score + 0.5 × ML_Score + 0.2 × Behavioral_Score
-```
+1. **Calibration**: Raw inputs are normalized into $[0, 1]$ probability space.
+2. **Context Adaptation**: Weights $\{w_{rule}, w_{ml}, w_{beh}\}$ are dynamically adjusted based on the `drift_score`.
+3. **Temporal Escalation**: A sliding confirmation window requires $k$ anomalies in $n$ events to escalate a "suspicion" to an "alert".
 
-Thresholds:
+**Profiles:**
 
-- `Risk > 0.85` → CRITICAL alert
-- `0.65 < Risk ≤ 0.85` → WARNING alert
-- `Risk ≤ 0.65` → INFO / benign
+- `CONSERVATIVE`: High precision, strict temporal requirements.
+- `AGGRESSIVE`: High recall, immediate alerting on mild anomalies.
+- `DRIFT-SENSITIVE`: Automatically prioritizes rules when model drift is high.
 
 ### 5. Adaptive Detection (`detection_engine/adaptive_detection.py`)
 
