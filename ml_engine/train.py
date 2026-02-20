@@ -72,8 +72,13 @@ REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 MLFLOW_URI  = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
 EXPERIMENT  = "IDS-IsolationForest-v1"
 
-mlflow.set_tracking_uri(MLFLOW_URI)
-mlflow.set_experiment(EXPERIMENT)
+try:
+    mlflow.set_tracking_uri(MLFLOW_URI)
+    mlflow.set_experiment(EXPERIMENT)
+except Exception as e:
+    print(f"⚠️  MLflow setup failed (unreachable?): {e}")
+    # Fallback for local tracking if remote is down
+    mlflow.set_tracking_uri("file:./mlruns")
 
 # ─── Hyperparameter grid ─────────────────────────────────────────────────────
 PARAM_GRID = {
