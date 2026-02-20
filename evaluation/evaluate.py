@@ -57,7 +57,10 @@ class AggregateResult:
         )
 
 
-from evaluation.data_loader import IDSDataLoader
+try:
+    from evaluation.data_loader import IDSDataLoader
+except (ImportError, ModuleNotFoundError):
+    from data_loader import IDSDataLoader
 
 # ---------------------------------------------------------------------------
 # Dataset Generator

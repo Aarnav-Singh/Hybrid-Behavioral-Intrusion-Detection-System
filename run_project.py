@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     # ── Step 7: Research-Grade Evaluation ──────────────────────────────────
     header("STEP 7/8 · Multi-run Evaluation & Ablation Study")
-    run([sys.executable, "evaluation/evaluate.py"])
+    run([sys.executable, "-m", "evaluation.evaluate"])
 
     # ── Step 8: Launch Dashboard & API ──────────────────────────────────────
     header("STEP 8/8 · Launching API Backend & React Dashboard")
