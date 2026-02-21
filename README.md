@@ -1,91 +1,410 @@
-# Cyber Sentinel: Hybrid Behavioral Intrusion Detection System
+# 📘 HB-IDS v2 — Documentation & Architecture
 
-Cyber Sentinel is a production-grade, research-oriented network intrusion detection system. It employs a **hybrid machine learning approach** combining temporal sequence modeling, graph-based behavioral profiling, and threat-intel enrichment, aligned tightly with Zero-Trust principles. This architecture is designed for adversarially robust threat detection.
+## 🧾 Title
 
----
-
-## 🚀 Quickstart
-
-1. **Clone & Setup:**
-
-   ```powershell
-   git clone <repo-url>
-   cd "Hybrid Intrusion Detection System"
-   .\start.ps1
-   ```
-
-   *The script will automatically handle Docker, Python venv, and NPM dependencies.*
-
-   Or using docker directly:
-
-   ```bash
-   docker-compose up --build
-   ```
-
-2. **Access the Dashboard:**
-   - **V2 Dashboard:** Open `http://localhost:3000`
-   - **V2 API Docs:** Open `http://localhost:8001/docs`
-
-3. **Access V1 Legacy (Restored):**
-   The V1 environment is isolated to prevent port conflicts.
-   - **Legacy Dashboard (React):** `http://localhost:13000`
-   - **Legacy Backend (FastAPI):** `http://localhost:18888`
-   - **Legacy Kibana:** `http://localhost:15601`
-   - **Legacy MLflow:** `http://localhost:15000`
-   - **Legacy Elasticsearch:** `http://localhost:19200`
+# **Hybrid Behavioral Intrusion Detection System (HB-IDS v2)**
 
 ---
 
-## 🏗 Architecture & ML Flow
+## 🪧 Project Overview
 
-Cyber Sentinel uses a hybrid ensemble architecture designed to catch complex, multi-stage attacks (like lateral movement and slow beaconing) that signature-based or purely stateless statistical models miss.
+**HB-IDS v2** is a next-generation intrusion detection framework that combines:
 
-### Core Pipeline
+✔ Temporal behavioral modeling
+✔ Graph relational representation
+✔ Threat Intelligence enrichment
+✔ Adversarial attack simulation
+✔ Robust hybrid anomaly detection
+✔ Real-time inference APIs
+✔ Frontend dashboard & SOC-style UI
+✔ Modular DevOps & CI/CD integration
 
-1. **Data Ingestion:** Network flow data enriched with localized threat intel (AbuseIPDB Fusion).
-2. **Behavioral Profiling:** Real-time graph construction of entity interactions.
-3. **Multi-Model Inference:**
-   - **Hybrid Behavioral Engine:** Merges GraphSAGE structural features with TCN sequence modeling (Default).
-   - **Fast Baseline Detector:** Lightweight statistical analysis for high-throughput detection.
-   - **GraphSAGE / TCN / XGBoost:** Specialist models selectable via the Registry.
-4. **Explainability & Attribution:** Deep SHAP values mapped to SOC-ready alerts.
+The system is optimized for:
 
-### V1 vs V2 Comparison
+* **Intel i7 12th Gen**
+* **32GB RAM**
+* **6GB VRAM**
 
-| Feature | V1 (Archive) | V2 (Current) |
-| :--- | :--- | :--- |
-| **Architecture** | Notebook-driven, manual scripts | Modular FastAPI backend, Worker queues |
-| **Frontend** | Streamlit (Python) | React + Tailwind (Vite + TS) |
-| **Graph Model** | Static NetworkX checks | GNN (GraphSAGE) + Node2Vec continuous |
-| **Temporal Model** | Basic sliding stats / Isolation Forest | TCN Sequence Modeling |
-| **Orchestration** | Manual | Docker Compose, K8s manifests, RQ Worker |
-| **Red-Team Lab** | Scripts loosely coupled | Integrated Adversarial UI & Experiment pipelines |
-| **Deployment** | Local | Cloud-ready, containerized |
+but remains scalable to cloud infrastructure.
+
+It supports both **fast/demo mode** and a **full hybrid mode**.
 
 ---
 
-## 💻 Hardware Tuning (i7 / 32GB RAM / 6GB VRAM)
+## 📦 Repository Structure
 
-This repository is strictly tuned to run smoothly on an Intel i7 (12th Gen) workstation with 32GB RAM and 6GB VRAM.
-
-- **VRAM Constraint:** Graph hidden dimensions are kept $\le$ 128. Batch node inference is capped at 512. TCN batch sizes are bounded to 128 to prevent OOM errors on the 6GB GPU. Use FP16 mixed precision when training models.
-- **RAM / CPU Optimization:** Node2Vec runs on the CPU by default. Sliding windows and graph snapshots are managed in PostgreSQL & Redis to keep memory footprint stable.
-- **Modes:**
-  - `--mode fast`: Uses Node2Vec + TCN for low-resource profiling.
-  - `--mode hybrid`: Uses PyG GraphSAGE + TCN.
+```
+HB-IDS/
+│
+├── V1/                                   # Legacy baseline
+│
+├── backend/                              # Backend API + models
+│   ├── api/                              # FastAPI endpoints
+│   ├── core/                             # Shared logic
+│   ├── graph_engine/                     # Graph building & embeddings
+│   ├── temporal_engine/                  # Temporal model (TCN)
+│   ├── intel_engine/                     # Threat intel vectorization
+│   ├── fusion_engine/                    # Final fusion model
+│   ├── adversarial_lab/                  # Attack simulators
+│   ├── evaluation/                       # Metrics & experiments
+│   ├── worker/                           # Background jobs (training)
+│   ├── db/                               # ORM models
+│   └── utils/                            # Explainability, helpers
+│
+├── frontend/                             # UI (React + Tailwind)
+│
+├── configs/                              # YAML config files
+│
+├── scripts/                              # Run & setup scripts
+├── examples/                             # Sample datasets
+├── notebooks/                            # Demo notebooks
+├── monitoring/                           # Grafana & metrics
+├── k8s/                                  # Kubernetes manifests
+├── .github/workflows/                    # CI/CD
+├── docker-compose.yml
+├── Makefile
+└── README.md
+```
 
 ---
 
-## 🎯 Alignment with Research Goals
+## 🎯 Project Goals
 
-This repository is the culmination of Aarnav's research addressing:
+1. **Baseline detection (v1)**
+   – Isolation Forest / LightGBM
+   – Feature-based anomaly detection
 
-1. **Hybrid Detection:** Merging statistical temporal modeling (TCN) with relational graph awareness (GraphSAGE) captures standard anomalies *and* structural anomalies.
-2. **Zero-Trust Validation:** The embedded **Adversarial Lab** ensures the system isn't just accurate on clean data—it measures *Attack Success Rate (ASR)* under perturbation. Defenses like DropEdge and embedding drift tracking make it robust against adaptive adversaries.
-3. **Operational Viability:** Incorporates explainability (SHAP feature attribution + nearest anomalous neighbors) natively in the UI, mapping directly to SOC analyst needs.
+2. **Hybrid detection (v2)**
+   – GraphSAGE (relational)
+   – Temporal Convolutional Networks
+   – Intel MLP fusion
+   – Node2Vec (demo/fast mode)
+
+3. **Adversarial Framework**
+   – Simulate attacks
+   – Evaluate defense robustness
+
+4. **Deployment & DevOps**
+   – Docker & Kubernetes
+   – Monitoring & CI/CD
+   – Backend APIs & frontend dashboard
 
 ---
 
-## ⚖️ License
+## 🏛 Core Components
 
-MIT. See `LICENSE` for details.
+### 🧠 1. Feature Engineering
+
+Per-window aggregation of:
+
+* bytes_in, bytes_out
+* conn_count
+* DNS entropy
+* NXDOMAIN rate
+* failed authentication events
+* port diversity
+
+These features go into both temporal and graph pipelines.
+
+---
+
+# ⚙️ 2. Graph Engine
+
+* Builds relational graph: IP ↔ IP, IP ↔ domain, host ↔ CVE
+* Node2Vec for fast embedding demo mode
+* GraphSAGE for full relational modeling
+* Neighbor sampling, dropout regularization
+
+---
+
+## 🕒 3. Temporal Engine
+
+TCN (Temporal Convolutional Network):
+
+– 3 residual blocks
+– Channels = 32
+– Sequence window length configurable
+
+Purpose: capture periodicity, burst patterns, slow beaconing.
+
+---
+
+## 🛡 4. Threat Intel Engine
+
+Simple MLP encoder for:
+
+* CVSS
+* Exploit maturity
+* Reputation score
+* FortiGuard-like flags
+* vulnerability score
+
+---
+
+## 🧩 5. Fusion Engine
+
+Concatenates:
+
+```
+[Graph embedding | Temporal embedding | Intel embedding]
+```
+
+→ passes through a small fusion MLP
+→ outputs final anomaly risk score
+
+Supports:
+
+* Demo (node2vec + LightGBM)
+* Full hybrid mode
+
+---
+
+## 🧨 6. Adversarial Lab
+
+Attack scenarios:
+
+| Attack               | Module                                  |
+| -------------------- | --------------------------------------- |
+| DNS Tunneling        | adversarial_lab/dns_tunneling.py        |
+| Lateral movement     | adversarial_lab/lateral_movement.py     |
+| Graph Poisoning      | adversarial_lab/graph_poisoning.py      |
+| Slow beacon evasion  | adversarial_lab/beacon_evasion.py       |
+| Feature perturbation | adversarial_lab/feature_perturbation.py |
+
+Each writes synthetic traffic into DB and runs evaluation pipeline.
+
+---
+
+## 📊 7. Evaluation & Experiments
+
+* Precision@K
+* PR-AUC
+* Detection Delay
+* Attack Success Rate
+* Embedding Drift Norm
+
+Experiments folder stores:
+
+```
+experiments/run_001/
+    metrics.json
+    drift_plot.png
+    roc_curve.png
+```
+
+---
+
+## 🌐 8. Backend (FastAPI)
+
+### Key API Endpoints
+
+| PATH                 | METHOD | DESCRIPTION            |
+| -------------------- | ------ | ---------------------- |
+| /api/v2/infer        | POST   | Real-time inference    |
+| /api/v2/train        | POST   | Trigger training       |
+| /api/v2/graph/update | POST   | Update graph           |
+| /api/v2/alerts       | GET    | Paginated alerts       |
+| /api/v2/redteam/run  | POST   | Launch attack scenario |
+| /api/v2/experiments  | GET    | Get experiment results |
+
+Auth via JWT roles:
+admin, red_team, blue_team, viewer
+
+---
+
+## 🖥 Frontend Dashboard
+
+Built with:
+
+* React (Vite)
+* TypeScript
+* TailwindCSS
+* Cytoscape / vis-network for graph
+
+### UI Sections
+
+* Overview KPI dashboard
+* Hosts table
+* Host detail charts
+* Graph Explorer
+* Alerts list
+* Attack Lab
+* Experiments
+* Settings
+
+---
+
+## 🐳 DevOps & Deployment
+
+### Docker Compose
+
+Running locally:
+
+```
+docker-compose up
+```
+
+Services:
+
+* api
+* worker
+* postgres
+* redis
+* grafana
+* prometheus
+* frontend
+
+---
+
+### Kubernetes Supported
+
+Contains:
+
+* Deployments
+* Services
+* ConfigMaps
+* Secrets
+
+Production manifests in k8s/
+
+---
+
+## 📈 Monitoring & Observability
+
+Prometheus metrics exported:
+
+* inference_time_ms
+* train_time
+* queue_depth
+* GPU_usage
+* embedding_drift
+
+Included Grafana dashboards:
+
+```
+monitoring/dashboards/
+```
+
+---
+
+## 🧪 Tests & CI
+
+* pytest for backend modules
+* e2e test for inference + alerts
+* CI: GitHub Actions builds + tests + container checks
+
+---
+
+## 🧠 Mode Options
+
+### Fast Demo Mode
+
+```
+--mode fast
+```
+
+Uses:
+
+* Node2Vec + LightGBM
+* Small TCN
+
+### Full Hybrid Mode
+
+```
+--mode hybrid
+```
+
+Uses:
+
+* GraphSAGE + TCN + Intel + Fusion MLP
+
+---
+
+## 📚 Quick Start
+
+1. Clone repo
+2. Install Docker & Docker Compose
+3. Run `./scripts/dev_setup.sh`
+4. Run `./scripts/dev_run.sh`
+5. Visit:
+
+   * API docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+   * Frontend: [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🌐 Architecture Diagrams
+
+### Global System Overview (Mermaid)
+
+```mermaid
+flowchart TD
+    subgraph Backend
+        A[Telemetry Data] --> B[Feature Engineering]
+        B --> C[Graph Engine]
+        B --> D[Temporal Engine]
+        B --> E[Intel Engine]
+        C --> F[Fusion Engine]
+        D --> F
+        E --> F
+        F --> G[Anomaly Score]
+        G --> H[Alerts Store]
+        H --> I[Frontend]
+    end
+
+    subgraph Adversarial Lab
+        X[Attack Generator] --> A
+        X --> Experiments
+    end
+
+    subgraph UI
+        Front[Frontend Dashboard] --> Alerts[Alerts UI]
+        Front --> Hosts[Host Explorer]
+        Front --> Graph[Graph Explorer]
+        Front --> Lab[Attack Lab]
+    end
+
+    G --> UI
+    H --> UI
+```
+
+---
+
+### Detailed Data Flow
+
+```mermaid
+sequenceDiagram
+    participant FE as Feature Eng
+    participant GR as Graph Engine
+    participant TE as Temporal Engine
+    participant IE as Intel Engine
+    participant FU as Fusion
+    participant API as FastAPI
+    participant UI as Frontend
+
+    UI->>API: POST /infer
+    API->>FE: fetch features
+    FE->>GR: graph features
+    FE->>TE: seq features
+    FE->>IE: intel features
+    GR->>FU: graph embedding
+    TE->>FU: temporal embedding
+    IE->>FU: intel embedding
+    FU->>API: score
+    API->>UI: result JSON
+```
+
+---
+
+# 🧠 Final Notes
+
+### Why this is a Strong Architecture
+
+✔ Modular & extensible
+✔ Adversarial experiments included
+✔ Dual operational modes
+✔ SOC-style dashboard
+✔ Monitoring & CI
+✔ Clean versioning
+
+---
