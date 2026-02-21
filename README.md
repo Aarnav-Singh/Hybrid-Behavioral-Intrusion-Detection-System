@@ -1,9 +1,5 @@
 # 📘 HB-IDS v2 — Documentation & Architecture
 
-## 🧾 Title
-
-# **Hybrid Behavioral Intrusion Detection System (HB-IDS v2)**
-
 ---
 
 ## 🪧 Project Overview
