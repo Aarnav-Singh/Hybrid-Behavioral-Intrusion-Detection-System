@@ -1,5 +1,19 @@
 # Model Lifecycle
 
+## Model Lineage
+
+### V1 Model (Research Baseline)
+
+- **Primary Algorithm**: Isolation Forest
+- **Approach**: Unsupervised anomaly detection on tabular feature windows.
+- **Use Case**: Lightweight demo mode and algorithmic baseline for research comparison.
+
+### V2 Model (Hybrid Evolution)
+
+- **Primary Algorithm**: Rule + ML + Behavioral confidence fusion.
+- **Approach**: Multi-modal fusion of graph-relational embeddings, temporal sequences (TCN), and threat intelligence.
+- **Use Case**: Production-grade detection with high-precision behavioral validation and adversarial robustness.
+
 ## Training Flow
 
 1. Extract features

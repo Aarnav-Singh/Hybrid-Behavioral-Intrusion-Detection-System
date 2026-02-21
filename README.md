@@ -27,6 +27,21 @@ It supports both **fast/demo mode** and a **full hybrid mode**.
 
 ---
 
+## 📈 Project Evolution
+
+HB-IDS began as a lightweight behavioral anomaly detector (**V1**) using Isolation Forest and tabular feature modeling. It serves as our **Research Baseline** and **Academic Experiment** version.
+
+**V2** extends this foundations into a production-ready hybrid IDS framework by integrating:
+* Rule-based detection
+* Drift-aware anomaly validation
+* Adversarial resilience testing
+* Full observability stack (Prometheus/Grafana/Kibana)
+* Real-time React-based SOC dashboards
+
+V1 remains fully available in the `/V1` directory as a baseline reference and a lightweight demo mode for low-resource environments.
+
+---
+
 ## 📦 Repository Structure
 
 ```
