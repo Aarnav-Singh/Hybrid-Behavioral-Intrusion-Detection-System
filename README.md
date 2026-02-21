@@ -391,16 +391,3 @@ sequenceDiagram
 ```
 
 ---
-
-# 🧠 Final Notes
-
-### Why this is a Strong Architecture
-
-✔ Modular & extensible
-✔ Adversarial experiments included
-✔ Dual operational modes
-✔ SOC-style dashboard
-✔ Monitoring & CI
-✔ Clean versioning
-
----
