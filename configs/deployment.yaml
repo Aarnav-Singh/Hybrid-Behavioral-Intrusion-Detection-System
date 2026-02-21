@@ -1,0 +1,8 @@
+environment: production
+retention:
+  database_days: 30
+  log_level: INFO
+
+redis:
+  max_memory: 2gb
+  eviction_policy: allkeys-lru

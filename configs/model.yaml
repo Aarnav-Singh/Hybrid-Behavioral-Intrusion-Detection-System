@@ -1,0 +1,22 @@
+training:
+  batch_size: 512
+  learning_rate: 0.001
+  epochs: 50
+  early_stopping_patience: 10
+
+graphsage:
+  layers: 2
+  hidden_size: 64
+  sampling: [15, 10]
+  dropout: 0.3
+
+tcn:
+  blocks: 3
+  channels: 32
+  kernel_size: 3
+  seq_len: 24
+
+lightgbm_baseline:
+  num_leaves: 31
+  max_depth: 8
+  learning_rate: 0.05

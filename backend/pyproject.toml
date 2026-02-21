@@ -31,7 +31,7 @@ torch-geometric = "^2.4.0"
 dgl = "^1.1.2"
 sentence-transformers = "^2.2.2"
 networkx = "^3.1"
-node2vec = "^0.4.6"
+node2vec = "*"
 shap = "^0.43.0"
 
 [tool.poetry.group.dev.dependencies]

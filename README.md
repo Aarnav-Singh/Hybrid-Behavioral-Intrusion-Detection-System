@@ -1,6 +1,6 @@
-# HB-IDS v2: Hybrid Behavioral Intrusion Detection System
+# Cyber Sentinel: Hybrid Behavioral Intrusion Detection System
 
-HB-IDS v2 is a production-grade, research-oriented network intrusion detection system. It employs a **hybrid machine learning approach** combining temporal sequence modeling, graph-based behavioral profiling, and threat-intel enrichment, aligned tightly with Zero-Trust principles. This architecture is designed for adversarially robust threat detection.
+Cyber Sentinel is a production-grade, research-oriented network intrusion detection system. It employs a **hybrid machine learning approach** combining temporal sequence modeling, graph-based behavioral profiling, and threat-intel enrichment, aligned tightly with Zero-Trust principles. This architecture is designed for adversarially robust threat detection.
 
 ---
 
@@ -10,7 +10,7 @@ HB-IDS v2 is a production-grade, research-oriented network intrusion detection s
 
    ```bash
    git clone <repo-url>
-   cd HB-IDS
+   cd Cyber-Sentinel
    ./scripts/dev_setup.sh
    ```
 
@@ -27,14 +27,20 @@ HB-IDS v2 is a production-grade, research-oriented network intrusion detection s
    ```
 
 3. **Access the Dashboard:**
-   Open `http://localhost:3000` for the React Frontend.
-   API docs are available at `http://localhost:8000/docs`.
+   - **V2 Dashboard:** Open `http://localhost:3000`
+   - **V2 API Docs:** Open `http://localhost:8001/docs`
+
+4. **Access V1 Legacy (Optional):**
+   If you have restored the V1 environment, you can access it via the **Legacy Port Block (10000+)**.
+   - **Legacy Kibana:** `http://localhost:15601`
+   - **Legacy MLflow:** `http://localhost:15000`
+   - **Legacy Detection:** `http://localhost:18000`
 
 ---
 
 ## 🏗 Architecture & ML Flow
 
-HB-IDS uses a hybrid ensemble architecture designed to catch complex, multi-stage attacks (like lateral movement and slow beaconing) that signature-based or purely stateless statistical models miss.
+Cyber Sentinel uses a hybrid ensemble architecture designed to catch complex, multi-stage attacks (like lateral movement and slow beaconing) that signature-based or purely stateless statistical models miss.
 
 ### Core Pipeline
 

@@ -18,10 +18,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuration
-MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
+MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:12701")
 DB_NAME = os.environ.get("DB_NAME", "cybersentinel")
-ES_HOST = os.environ.get("ES_HOST", "http://localhost:9200")
-PROMETHEUS_HOST = os.environ.get("PROMETHEUS_HOST", "http://localhost:9090")
+ES_HOST = os.environ.get("ES_HOST", "http://localhost:19200")
+PROMETHEUS_HOST = os.environ.get("PROMETHEUS_HOST", "http://localhost:19090")
 
 # Indices
 LOGS_INDEX = "nginx-logs-*"
@@ -244,7 +244,7 @@ async def get_system_metrics():
 
     async def check_de():
         try:
-            resp = await http_client.get("http://localhost:8000/metrics", timeout=1.0)
+            resp = await http_client.get("http://localhost:18000/metrics", timeout=1.0)
             if resp.status_code == 200:
                 stats = {"total_alerts": 0, "active_threats": 0}
                 for line in resp.text.split('\n'):
@@ -258,13 +258,13 @@ async def get_system_metrics():
 
     async def check_prom():
         try:
-            resp = await http_client.get("http://localhost:9090/-/healthy", timeout=1.0)
+            resp = await http_client.get("http://localhost:19090/-/healthy", timeout=1.0)
             return resp.status_code == 200
         except: return False
 
     async def check_kib():
         try:
-            resp = await http_client.get("http://localhost:5601/api/status", timeout=1.0)
+            resp = await http_client.get("http://localhost:15601/api/status", timeout=1.0)
             return resp.status_code == 200
         except: return False
 

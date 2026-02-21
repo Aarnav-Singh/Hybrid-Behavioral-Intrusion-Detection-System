@@ -1,0 +1,10 @@
+node2vec:
+  dimensions: 64
+  walk_length: 40
+  num_walks: 10
+  window: 5
+  workers: 4
+
+rebuild_schedule:
+  hourly: true
+  snapshot_retention_days: 7

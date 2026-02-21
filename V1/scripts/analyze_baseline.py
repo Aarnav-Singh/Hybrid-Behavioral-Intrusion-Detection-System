@@ -60,7 +60,7 @@ from scipy.stats import (
 # Elasticsearch connection
 # ─────────────────────────────────────────────────────────────────────────────
 
-def connect_elasticsearch(host: str = "http://localhost:9200") -> Elasticsearch:
+def connect_elasticsearch(host: str = "http://localhost:19200") -> Elasticsearch:
     """Create and test Elasticsearch connection."""
     es = Elasticsearch([host])
     try:
@@ -559,7 +559,7 @@ def parse_args():
         description="Analyze baseline traffic from Elasticsearch",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("--host",   default="http://localhost:9200", help="Elasticsearch host")
+    parser.add_argument("--host",   default="http://localhost:19200", help="Elasticsearch host")
     parser.add_argument("--index",  default="nginx-logs-*",           help="Elasticsearch index pattern")
     parser.add_argument("--size",   type=int, default=10_000,          help="Number of logs to fetch")
     parser.add_argument("--output", default="data/baseline_profile.json", help="Output JSON file")

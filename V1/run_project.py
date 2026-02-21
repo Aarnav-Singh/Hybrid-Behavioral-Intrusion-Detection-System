@@ -45,7 +45,7 @@ def run(cmd, cwd=None, check=True, capture=False):
     return result
 
 
-def wait_for_elasticsearch(url="http://localhost:9200", timeout=90):
+def wait_for_elasticsearch(url="http://localhost:19200", timeout=90):
     """Poll ES health endpoint until it responds."""
     print(f"\n⏳  Waiting for Elasticsearch at {url} ...")
     start = time.time()

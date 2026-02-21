@@ -1,0 +1,10 @@
+defenses:
+  input_noise_augmentation: true
+  dropedge:
+    enabled: true
+    rate: 0.1
+  contrastive_pretraining: true
+
+thresholds:
+  drift_alert_norm: 0.5
+  critical_score: 0.85

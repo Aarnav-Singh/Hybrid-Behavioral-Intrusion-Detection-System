@@ -1,6 +1,6 @@
-import React from 'react';
+
 import { Beaker, Download } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const mockExperiments = [
     { name: 'Baseline (LightGBM)', prAUC: 0.65, asr: 0.45 },

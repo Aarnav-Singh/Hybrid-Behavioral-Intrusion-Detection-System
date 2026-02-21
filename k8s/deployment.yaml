@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hb-ids-api
+  labels:
+    app: hb-ids
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hb-ids
+  template:
+    metadata:
+      labels:
+        app: hb-ids
+    spec:
+      containers:
+        - name: api
+          image: hb-ids-backend:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hb-ids-secrets
+                  key: database_url

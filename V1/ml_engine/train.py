@@ -69,7 +69,7 @@ MODELS_DIR.mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ─── MLflow setup ────────────────────────────────────────────────────────────
-MLFLOW_URI  = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+MLFLOW_URI  = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:15000")
 EXPERIMENT  = "IDS-IsolationForest-v1"
 
 try:

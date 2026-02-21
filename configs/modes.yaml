@@ -1,4 +1,4 @@
-mode: hybrid
+mode: fast | hybrid
 
 fast:
   use_node2vec: true

@@ -39,7 +39,7 @@ import json
 # Configuration
 # ─────────────────────────────────────────────────────────────────────────────
 
-BASE_URL = "http://localhost:8080"
+BASE_URL = "http://localhost:18080"
 
 # Realistic browser user agents sampled from real-world distributions
 # (Chrome ~65%, Safari ~19%, Firefox ~4%, Edge ~4%, Mobile ~8%)
