@@ -8,17 +8,13 @@ Cyber Sentinel is a production-grade, research-oriented network intrusion detect
 
 1. **Clone & Setup:**
 
-   ```bash
+   ```powershell
    git clone <repo-url>
-   cd Cyber-Sentinel
-   ./scripts/dev_setup.sh
+   cd "Hybrid Intrusion Detection System"
+   .\start.ps1
    ```
 
-2. **Run Local Sandbox:**
-
-   ```bash
-   ./scripts/dev_run.sh
-   ```
+   *The script will automatically handle Docker, Python venv, and NPM dependencies.*
 
    Or using docker directly:
 
@@ -26,15 +22,17 @@ Cyber Sentinel is a production-grade, research-oriented network intrusion detect
    docker-compose up --build
    ```
 
-3. **Access the Dashboard:**
+2. **Access the Dashboard:**
    - **V2 Dashboard:** Open `http://localhost:3000`
    - **V2 API Docs:** Open `http://localhost:8001/docs`
 
-4. **Access V1 Legacy (Optional):**
-   If you have restored the V1 environment, you can access it via the **Legacy Port Block (10000+)**.
+3. **Access V1 Legacy (Restored):**
+   The V1 environment is isolated to prevent port conflicts.
+   - **Legacy Dashboard (React):** `http://localhost:13000`
+   - **Legacy Backend (FastAPI):** `http://localhost:18888`
    - **Legacy Kibana:** `http://localhost:15601`
    - **Legacy MLflow:** `http://localhost:15000`
-   - **Legacy Detection:** `http://localhost:18000`
+   - **Legacy Elasticsearch:** `http://localhost:19200`
 
 ---
 
@@ -44,13 +42,13 @@ Cyber Sentinel uses a hybrid ensemble architecture designed to catch complex, mu
 
 ### Core Pipeline
 
-1. **Data Ingestion & Windowing:** Network flow data is ingested, batched into sliding time-windows, and enriched with localized intel (e.g. CVSS scores).
-2. **Graph Construction:** Adjacency graphs of entity interaction (IPs/Domains) are updated in real-time.
-3. **Embeddings & Temporal Encoders:**
-   - **TCN (Temporal Convolutional Network):** Encodes the sequence of time-windowed statistical features.
-   - **GraphSAGE / Node2Vec:** Extracts spatial behavior across the entity interaction graph.
-   - **Threat Intel MLP:** Processes static and categorical risk indicators.
-4. **Fusion MLP:** Combines temporal, spatial, and intel embeddings to produce a final anomaly score, risk level, and feature attribution.
+1. **Data Ingestion:** Network flow data enriched with localized threat intel (AbuseIPDB Fusion).
+2. **Behavioral Profiling:** Real-time graph construction of entity interactions.
+3. **Multi-Model Inference:**
+   - **Hybrid Behavioral Engine:** Merges GraphSAGE structural features with TCN sequence modeling (Default).
+   - **Fast Baseline Detector:** Lightweight statistical analysis for high-throughput detection.
+   - **GraphSAGE / TCN / XGBoost:** Specialist models selectable via the Registry.
+4. **Explainability & Attribution:** Deep SHAP values mapped to SOC-ready alerts.
 
 ### V1 vs V2 Comparison
 

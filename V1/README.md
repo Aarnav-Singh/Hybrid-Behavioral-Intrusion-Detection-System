@@ -1,5 +1,8 @@
-# Hybrid Behavioral Intrusion Detection Platform (HB-IDS)
+# [LEGACY] Hybrid Behavioral Intrusion Detection Platform (HB-IDS v1)
 
+> [!WARNING]
+> This is a **LEGACY ENVIRONMENT** preserved for archival and comparative research purposes. The production system has been migrated to **Cyber Sentinel v2** in the root directory.
+>
 > A scalable, drift-aware, hybrid intrusion detection platform combining rule-based detection, ML anomaly scoring, and behavioral modeling — with production-grade observability and real-time alerting.
 
 [![CI](https://github.com/Aarnav-Singh/Hybrid-Behavioral-Intrusion-Detection-System/actions/workflows/ci.yml/badge.svg)](https://github.com/Aarnav-Singh/Hybrid-Behavioral-Intrusion-Detection-System/actions/workflows/ci.yml)
@@ -108,27 +111,21 @@ HB-IDS uses a Context-Aware Adaptive Fusion engine (`AdaptiveHybridScorer`) that
 ### Run the full stack
 
 ```bash
-git clone https://github.com/Aarnav-Singh/Hybrid-Behavioral-Intrusion-Detection-System.git
-cd Hybrid-Behavioral-Intrusion-Detection-System
-
-# Start all Docker services
-docker compose up -d --build
-
 # Run the complete pipeline (auto-generates data, trains model, starts API + React UI)
+# Ensure you are using a dedicated Python 3.11 environment for V1.
 python run_project.py
 ```
 
-### Service URLs
+### Service URLs (Legacy Remapped)
 
-| Service | URL |
-| --- | --- |
-| **React Dashboard** | <http://localhost:5173> |
-| **FastAPI Backend** | <http://localhost:8888/docs> |
-| **Prometheus** | <http://localhost:9090> |
-| **MLflow** | <http://localhost:5000> |
-| **Kibana** | <http://localhost:5601> |
-| **Elasticsearch** | <http://localhost:9200> |
-| **Detection Engine** | <http://localhost:8000/metrics> |
+| Service | URL | Note |
+| --- | --- | --- |
+| **V1 Dashboard (React)** | <http://localhost:13000> | Remapped from 5173 |
+| **V1 Backend (FastAPI)** | <http://localhost:18888> | Remapped from 8888 |
+| **V1 Prometheus** | <http://localhost:19090> | Remapped from 9090 |
+| **V1 MLflow** | <http://localhost:15000> | Remapped from 5000 |
+| **V1 Kibana** | <http://localhost:15601> | Remapped from 5601 |
+| **V1 Elasticsearch** | <http://localhost:19200> | Remapped from 9200 |
 
 ---
 
