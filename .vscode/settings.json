@@ -1,0 +1,9 @@
+{
+    "builder.serverUrl": "",
+    "builder.command": "",
+    "builder.runDevServer": true,
+    "builder.autoDetectDevServer": true,
+    "builder.launchType": "editor",
+    "coderabbit.agentType": "Native",
+    "coderabbit.autoReviewMode": "prompt"
+}
