@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.coverage
+.cache
+.mypy_cache
+.tox
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+.eslintcache
+
+# Build
+dist/
+build/
+out/
+.next/
+.vite/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Project Specific
+.env
+backend/.venv
+frontend/node_modules
+frontend/.venv
+V1/.venv
+V1/data/
+V1/reports/
+V1/eval_output/
+V1/__pycache__/
+backend/api/__pycache__/
+backend/core/__pycache__/
+backend/db/__pycache__/
+backend/models/__pycache__/
+backend/utils/__pycache__/
+backend/worker/__pycache__/
+backend/graph/__pycache__/
+backend/temporal/__pycache__/
+backend/adversarial/__pycache__/
+backend/evaluation/__pycache__/
+backend/fusion/__pycache__/
+backend/experiments/__pycache__/
+V1/adversarial/__pycache__/
+V1/attacks/__pycache__/
+V1/backend/__pycache__/
+V1/detection_engine/__pycache__/
+V1/evaluation/__pycache__/
+V1/ml_engine/__pycache__/
+V1/scripts/__pycache__/
+V1/tests/__pycache__/
