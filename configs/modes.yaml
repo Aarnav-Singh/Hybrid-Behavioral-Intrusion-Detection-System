@@ -1,0 +1,11 @@
+mode: hybrid
+
+fast:
+  use_node2vec: true
+  use_graphsage: false
+  use_tcn: true
+
+hybrid:
+  use_node2vec: false
+  use_graphsage: true
+  use_tcn: true
