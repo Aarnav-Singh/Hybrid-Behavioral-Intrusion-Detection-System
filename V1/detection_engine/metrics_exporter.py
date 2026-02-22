@@ -211,7 +211,8 @@ def start_metrics_server(
 
     Parameters
     ----------
-    port  : int   TCP port to listen on (default 8000, matches docker-compose)
+    port  : int   TCP port to listen on (default 8000, matches docker compose)
+
     host  : str   Bind address
     debug : bool  Flask debug mode (disable in production)
     daemon: bool  If True, thread exits when main process exits

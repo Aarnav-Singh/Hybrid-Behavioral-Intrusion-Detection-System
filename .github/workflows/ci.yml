@@ -47,4 +47,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the docker-compose stack
-        run: docker-compose build
+        run: docker compose build

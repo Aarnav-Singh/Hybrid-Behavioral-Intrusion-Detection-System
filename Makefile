@@ -10,13 +10,13 @@ dev:
 	./scripts/dev_run.sh
 
 build:
-	docker-compose build
+	docker compose build
 
 up:
-	docker-compose up -d
+	docker compose up -d
 
 down:
-	docker-compose down
+	docker compose down
 
 test:
 	cd backend && poetry run pytest -v
@@ -29,4 +29,4 @@ clean:
 	rm -rf backend/.pytest_cache
 	rm -rf backend/__pycache__
 	rm -rf frontend/dist
-	docker-compose down -v
+	docker compose down -v

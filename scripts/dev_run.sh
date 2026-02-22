@@ -13,7 +13,8 @@ function cleanup() {
 }
 
 echo "1. Starting PostgreSQL & Redis via Docker..."
-docker-compose up -d postgres redis
+docker compose up -d postgres redis
+
 
 echo "2. Starting FastAPI Backend..."
 cd backend

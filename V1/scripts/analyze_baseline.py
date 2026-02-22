@@ -69,7 +69,7 @@ def connect_elasticsearch(host: str = "http://localhost:19200") -> Elasticsearch
         return es
     except Exception as e:
         print(f"✗ Cannot connect to Elasticsearch at {host}: {e}")
-        print("  Is the stack running? Try: docker-compose up -d")
+        print("  Is the stack running? Try: docker compose up -d")
         sys.exit(1)
 
 
@@ -547,7 +547,7 @@ def export_baseline_profile(
     print(f"  Scan entropy: {profile['detection_thresholds']['entropy_scan_threshold']:.4f}")
     print(f"{'═'*60}")
     print(f"\n  Next step: Start detection engine:")
-    print(f"  docker-compose up -d detection")
+    print(f"  docker compose up -d detection")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

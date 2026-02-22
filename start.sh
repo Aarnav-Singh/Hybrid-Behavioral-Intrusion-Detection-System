@@ -11,13 +11,13 @@ trap cleanup INT
 function cleanup() {
     echo -e "\n\033[1;33mStopping services...\033[0m"
     kill $(jobs -p) 2>/dev/null
-    docker-compose stop postgres redis
+    docker compose stop postgres redis
     echo -e "\033[1;32mCleanup complete. Goodbye!\033[0m"
     exit
 }
 
 echo -e "\n\033[1;33m1. Starting PostgreSQL & Redis via Docker...\033[0m"
-docker-compose up -d postgres redis
+docker compose up -d postgres redis
 
 echo -e "\n\033[1;33m2. Setting up and Starting FastAPI Backend...\033[0m"
 cd backend

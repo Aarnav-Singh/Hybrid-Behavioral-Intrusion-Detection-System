@@ -12,7 +12,7 @@ Before running the code, you need to start the infrastructure (database, web ser
    Open your terminal in the project root and run:
 
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
    *This starts Elasticsearch (data), Kibana (visuals), Nginx (web server), and Prometheus (metrics).*
@@ -124,4 +124,4 @@ To see if the system actually works, you can simulate a mix of normal and malici
 | **Infrastructure** | `docker-compose.yml` | Manages the database and servers. |
 
 ---
-**Troubleshooting Tip:** If a container doesn't start, run `docker-compose logs` to see the error. Usually, it's just a matter of waiting 30 seconds for Elasticsearch to fully wake up!
+**Troubleshooting Tip:** If a container doesn't start, run `docker compose logs` to see the error. Usually, it's just a matter of waiting 30 seconds for Elasticsearch to fully wake up!

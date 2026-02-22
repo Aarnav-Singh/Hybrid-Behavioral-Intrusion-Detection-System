@@ -27,5 +27,5 @@ cd ..
 
 echo "================================================"
 echo " Setup Complete! You can now run './scripts/dev_run.sh'"
-echo " or use 'docker-compose up' for full containerized runs."
+echo " or use 'docker compose up' for full containerized runs."
 echo "================================================"

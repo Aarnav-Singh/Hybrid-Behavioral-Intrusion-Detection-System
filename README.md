@@ -32,6 +32,7 @@ It supports both **fast/demo mode** and a **full hybrid mode**.
 HB-IDS began as a lightweight behavioral anomaly detector (**V1**) using Isolation Forest and tabular feature modeling. It serves as our **Research Baseline** and **Academic Experiment** version.
 
 **V2** extends this foundations into a production-ready hybrid IDS framework by integrating:
+
 * Rule-based detection
 * Drift-aware anomaly validation
 * Adversarial resilience testing
@@ -252,7 +253,7 @@ Built with:
 Running locally:
 
 ```
-docker-compose up
+docker compose up
 ```
 
 Services:
@@ -334,7 +335,7 @@ Uses:
 ## 📚 Quick Start
 
 1. Clone repo
-2. Install Docker & Docker Compose
+2. Install Docker & Docker Compose V2
 3. Run `./scripts/dev_setup.sh`
 4. Run `./scripts/dev_run.sh`
 5. Visit:

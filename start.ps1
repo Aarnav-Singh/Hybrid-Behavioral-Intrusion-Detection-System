@@ -20,7 +20,7 @@ try {
     }
 
     Write-Host "2. Starting PostgreSQL & Redis via Docker..." -ForegroundColor Yellow
-    docker-compose up -d postgres redis
+    docker compose up -d postgres redis
 
     Write-Host "`n3. Setting up Backend..." -ForegroundColor Yellow
     Set-Location backend
@@ -93,6 +93,6 @@ finally {
     }
     
     # Optionally stop the docker containers
-    docker-compose stop postgres redis
+    docker compose stop postgres redis
     Write-Host "Cleanup complete." -ForegroundColor Green
 }
