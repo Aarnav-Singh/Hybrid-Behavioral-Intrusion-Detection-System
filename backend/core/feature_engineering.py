@@ -65,6 +65,17 @@ def process_batch(raw_events: List[Dict[str, Any]]) -> pd.DataFrame:
         return df
     
     engineer = FeatureEngineer(window_size='1T')
+    
+    # Ensure all expected columns are present
+    expected_cols = {
+        'bytes_in': 0, 'bytes_out': 0, 'dst_port': 0, 'domain': '', 
+        'is_nxdomain': 0, 'failed_login': 0, 'fortiguard_hit': 0, 
+        'cvss_score': 0, 'is_vuln': 0, 'src_ip': 'unknown'
+    }
+    for col, default in expected_cols.items():
+        if col not in df.columns:
+            df[col] = default
+
     windowed_df = engineer.apply_windowing(df)
     enriched_df = engineer.enrich_intel(windowed_df)
     

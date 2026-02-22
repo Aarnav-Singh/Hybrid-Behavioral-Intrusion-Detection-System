@@ -18,8 +18,32 @@ def test_batch_pipeline_empty():
     
 def test_batch_pipeline_valid():
     data = [
-        {"timestamp": "2024-01-01T12:00:00Z", "src_ip": "10.0.0.1", "dst_port": 443, "domain": "github.com", "bytes_in": 100},
-        {"timestamp": "2024-01-01T12:00:30Z", "src_ip": "10.0.0.1", "dst_port": 80, "domain": "example.com", "bytes_in": 200}
+        {
+            "timestamp": "2024-01-01T12:00:00Z", 
+            "src_ip": "10.0.0.1", 
+            "dst_port": 443, 
+            "domain": "github.com", 
+            "bytes_in": 100,
+            "bytes_out": 50,
+            "is_nxdomain": 0,
+            "failed_login": 0,
+            "fortiguard_hit": 0,
+            "cvss_score": 0,
+            "is_vuln": 0
+        },
+        {
+            "timestamp": "2024-01-01T12:00:30Z", 
+            "src_ip": "10.0.0.1", 
+            "dst_port": 80, 
+            "domain": "example.com", 
+            "bytes_in": 200,
+            "bytes_out": 150,
+            "is_nxdomain": 0,
+            "failed_login": 0,
+            "fortiguard_hit": 0,
+            "cvss_score": 7.5,
+            "is_vuln": 1
+        }
     ]
     df = process_batch(data)
     
