@@ -23,7 +23,7 @@ source .venv/bin/activate || source .venv/Scripts/activate
 export DATABASE_URL="postgresql://user:password@localhost:5432/ids"
 export REDIS_URL="redis://localhost:6379/0"
 export MODE="hybrid"
-uvicorn api.main:app --reload --port 8000 &
+uvicorn api.main:app --reload --port 8001 &
 cd ..
 
 echo "3. Starting React Frontend..."

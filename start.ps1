@@ -52,7 +52,7 @@ try {
     if ($staleBackend) { Stop-Process -Id $staleBackend -Force -ErrorAction SilentlyContinue }
 
     Write-Host "Starting FastAPI Backend (Port 8001)..." -ForegroundColor Green
-    $backendProcess = Start-Process -PassThru -NoNewWindow -FilePath $uvicornExe -ArgumentList "backend.api.main:app", "--reload", "--port", "8001", "--host", "0.0.0.0"
+    $backendProcess = Start-Process -PassThru -NoNewWindow -FilePath $pythonExe -ArgumentList "-m", "uvicorn", "backend.api.main:app", "--reload", "--port", "8001", "--host", "0.0.0.0"
     Set-Location ..
 
     Write-Host "`n4. Setting up Frontend..." -ForegroundColor Yellow
@@ -84,15 +84,35 @@ try {
 finally {
     Write-Host "`nShutting down services..." -ForegroundColor Yellow
     
-    if ($backendProcess) {
-        Stop-Process -Id $backendProcess.Id -Force -ErrorAction SilentlyContinue
+    # Function to kill process tree
+    function Stop-ProcessTree ($processId) {
+        if ($processId) {
+            taskkill /F /T /PID $processId 2>$null
+        }
     }
+
+    # Stop Backend
+    if ($backendProcess) {
+        Write-Host "Stopping Backend..." -ForegroundColor Gray
+        Stop-ProcessTree $backendProcess.Id
+    }
+
+    # Stop Frontend
     if ($frontendProcess) {
-        # npm starts sub-processes, so we might need to be more aggressive
-        Get-Process -Id $frontendProcess.Id -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+        Write-Host "Stopping Frontend..." -ForegroundColor Gray
+        Stop-ProcessTree $frontendProcess.Id
     }
     
-    # Optionally stop the docker containers
-    docker compose stop postgres redis
+    # Final port cleanup to be sure
+    $ports = @(8001, 3000)
+    foreach ($port in $ports) {
+        $stale = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | Unique
+        foreach ($pid in $stale) {
+            Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+        }
+    }
+    
+    # Stop the docker containers
+    docker compose stop postgres redis 2>$null
     Write-Host "Cleanup complete." -ForegroundColor Green
 }
